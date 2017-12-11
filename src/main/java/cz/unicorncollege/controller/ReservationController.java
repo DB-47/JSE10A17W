@@ -148,6 +148,7 @@ public class ReservationController {
     }
 
     private void deleteReservation() {
+        System.out.println("You may exit by typing !cancel instead of number");
         if (!actualMeetingRoom.getReservationsWithIndexes(actualDate).isEmpty()) {
             Map<Integer, Reservation> availableReservations = actualMeetingRoom.getReservationsWithIndexes(actualDate);
             Map<Integer, Integer> choiceToId = new LinkedHashMap<>();
@@ -184,19 +185,20 @@ public class ReservationController {
                 }
             } while (reservationChoice == null);
 
+            String eraseDecision = Choices.getInput("Are you sure, you want to erase this reservation? (type true,y,yes,a to confirm) ");
+            if(Convertors.convertWordToBoolean(eraseDecision)){
             int idForErase = choiceToId.get(reservationChoice);
-
             actualMeetingRoom.getReservations().remove(idForErase);
             System.out.println("This reservation was removed");
+            }else{
+                System.out.println("No data was changed");   
+            }   
         } else {
             System.out.println("(i) Meeting room " + actualMeetingRoom.getName() + " has no reservation for this date: " + getFormattedDate());
         }
     }
 
     private void changeDate() {
-        // TODO let them enter new date in format YYYY-MM-DD, change the actual
-        // date, list actual reservations on this date and menu by
-        // getItemsToShow()
         String dateString = Choices.getInput("Type date as (DD.MM.YYYY)");
         Date newDate = Convertors.convertStringToDate(dateString);
 
