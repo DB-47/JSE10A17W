@@ -1,0 +1,13 @@
+MEETING_CENTRES,,,,,
+EBC Classic 7,EBC-MC_C7,Executive Briefing Centre - Classic 7 Praha Holeçovice - Jankovcova,,,
+EBC Paruk ýka,EBC-MC_PAR,Executive Briefing Centre - Paruk ýka Praha ¦i§kov - V KapslovnØ,,,
+EBC Brno,EBC-MC_BRNO,Executive Briefing Centre - Brno,,,
+MEETING_ROOMS,,,,,
+1.1 Alpha,EBC-C7-MR:1_1,Standardn¡ zasedac¡ m¡stnost,8,NO,EBC-MC_C7
+1.2 Beta,EBC-C7-MR:1_2,Standardn¡ zasedac¡ m¡stnost,8,NO,EBC-MC_C7
+1.3 Connect,EBC-C7-MR:1_3,Standardn¡ zasedac¡ m¡stnost s video konferenc¡,12,YES,EBC-MC_C7
+2.4 Delta,EBC-C7-MR:2_4,Velk  zasedac¡ m¡stnost s video konferenc¡,30,YES,EBC-MC_C7
+2.5 Epsilon,EBC-C7-MR:2_5,Velk  çkol¡rna s velkou tabul¡ a projekc¡,50,YES,EBC-MC_C7
+0.1 Edison,EBC-PAR-MR:0_1,UŸebna ,30,NO,EBC-MC_PAR
+1.1 Einstein,EBC-PAR-MR:1_1,Velk  uŸebna,50,NO,EBC-MC_PAR
+1.2 Tesla,EBC-PAR-MR:1_2,Menç¡ uŸebna,12,NO,EBC-MC_PAR
