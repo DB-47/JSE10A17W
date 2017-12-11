@@ -222,20 +222,33 @@ public class ReservationController {
 
         return sdf.format(actualDate);
     }
+
     /**
      * This method takes initial and finish time of new reservation and verifies
-     * if wanted time is available. Available time is time, where no other reservation
-     * is planned
-     * 
+     * if wanted time is available. Available time is time, where no other
+     * reservation is planned
+     *
      * @param t1 Initial time as String
      * @param t2 Finish time as String
-     * 
-     * @return true if reservation makes no conflicts, else false
+     *
+     * @return true if reservation makes no conflicts, otherwise false
      */
-    private boolean verifyNewReservationTimeAvailabilty(String t1, String t2){
-        
-        return false;
-
+    private boolean isGivenReservationTimeAvailable(String t1, String t2) {
+        int newInitialTime = Convertors.convertTimeStringToMinutesInt(t1);
+        int newFinishTime = Convertors.convertTimeStringToMinutesInt(t2);
+        for (Reservation r : actualMeetingRoom.getSortedReservationsByDate(actualDate)) {
+            int existingInitialTime = Convertors.convertTimeStringToMinutesInt(r.getTimeFrom());
+            int existingFinishTime = Convertors.convertTimeStringToMinutesInt(r.getTimeTo());
+            //Does initial time of already saved reservation belong to new Reservation?
+            boolean existingReservationOverlapAtItsBegin = existingInitialTime >= newInitialTime && existingInitialTime <= newFinishTime;
+            //Does finish time of already saved reservation belong to new Reservation?
+            boolean existingReservationOverlapAtItsEnd = existingFinishTime >= newInitialTime && existingFinishTime <= newFinishTime;
+            //If at least one of those timestamps of existing reservation belong to new one, it must be conflict!
+            if(existingReservationOverlapAtItsBegin || existingReservationOverlapAtItsEnd){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
