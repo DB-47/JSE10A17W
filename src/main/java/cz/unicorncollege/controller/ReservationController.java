@@ -140,6 +140,21 @@ public class ReservationController {
         // TODO enter data one by one, add new reservation object to the actual
         // room, than inform about successful adding
     }
+    
+    private void retrieveTimesFromUser(){
+    }
+    
+    private void retrieveExpectedPersonsCountFromUser(){
+    }
+    
+    private void retrieveCustomerNameFromUser(){
+    }
+    
+    private void retrieveVideoConferenceRequirementFromUser(){
+    }
+    
+    private void retrieveNoteFromCustomerFromUserIfNeeded(){
+    }
 
     private void deleteReservation() {
         // TODO list all reservations as choices and let enter item for
