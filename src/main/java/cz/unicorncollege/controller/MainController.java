@@ -40,7 +40,7 @@ public class MainController {
         choices.add("Exit and Save");
         choices.add("Exit");
         choices.add("Reservations (WIP)");
-        choices.add("Export resrvations into JSON (WIP)");
+        choices.add("Export resrvations into JSON (N/A)");
         while (true) {
             switch (Choices.getChoice("Select an option: ", choices)) {
                 case 1:

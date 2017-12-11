@@ -170,9 +170,9 @@ public class ReservationController {
         List<String> choices = new ArrayList<>();
         choices.add("List reservations again");
         choices.add("List reservations againg with details");
-        choices.add("Add New Reservation");
-        choices.add("Edit Reservations");
-        choices.add("Delete Reservation");
+        choices.add("Add New Reservation (MOCKED)");
+        choices.add("Edit Reservations (N/A)");
+        choices.add("Delete Reservation (N/A)");
         choices.add("Change Date");
         choices.add("Exit");
 
