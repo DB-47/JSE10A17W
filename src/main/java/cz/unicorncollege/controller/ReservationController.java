@@ -11,6 +11,7 @@ import cz.unicorncollege.bt.model.Reservation;
 import cz.unicorncollege.bt.model.ReservationConflictType;
 import cz.unicorncollege.bt.utils.Choices;
 import cz.unicorncollege.bt.utils.Convertors;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang3.time.DateUtils;
@@ -147,10 +148,86 @@ public class ReservationController {
         addFewTestReservations();
         System.out.println("Some test reservations added");
         //Let's assume for now, is in conflict
+        String[] times = verifyAndGetTimePeriodForReservation();
+
+        String expectedPersonCountString;
+        Integer expectedPersonCount;
+
+        String customer;
+
+        if (!times[0].equals("!cancel")) {
+            expectedPersonCountString = retrieveExpectedPersonCount();
+            if (!expectedPersonCountString.equals("!cancel")) {
+                try {
+                    expectedPersonCount = Integer.parseInt(expectedPersonCountString);
+                } catch (NumberFormatException nfe) {
+                    System.out.println("(!) For some reason failed Integer parse");
+                    expectedPersonCount = null;
+                }
+                String tempCustomer = retrieveCustomer();
+                if (!tempCustomer.equals("!cancel")) {
+                    customer = tempCustomer;
+                }
+            }
+        }
+
+    }
+    
+    private String retrieveVideoConferenceRequirment(){
+        return null;
+    }
+
+    private String retrieveCustomer() {
+        String customer;
+        do {
+            customer = Choices.getInput("Enter name of customer: ");
+            if (customer.equals("!cancel")) {
+                return customer;
+            }
+        } while (customer.isEmpty());
+        return customer;
+    }
+
+    private String retrieveExpectedPersonCount() {
+        String countString;
+        do {
+            countString = Choices.getInput("Enter count of persons using this reservation: ");
+            if (countString.equals("!cancel")) {
+                System.out.println("(i) Reservation add wizard stopped");
+                return countString;
+            }
+        } while (countString.isEmpty() || !verifyExpectedPersonCount(countString));
+        return countString;
+    }
+
+    private boolean verifyExpectedPersonCount(String gainedInput) {
+        Integer result;
+        try {
+            result = Integer.parseInt(gainedInput);
+        } catch (NumberFormatException nfe) {
+            System.out.println("(!) Only numeric values are accepted");
+            return false;
+        }
+        return result <= actualMeetingRoom.getCapacity() && result >= 1;
+    }
+
+    private String retrieveTime(String kind) {
+        String time;
+        do {
+            time = Choices.getInput("Reservation " + kind + " at: ");
+            if (time.equals("!cancel")) {
+                return time;
+            }
+        } while (time.isEmpty() || Convertors.convertTimeStringToMinutesInt(time) == -1);
+        return time;
+    }
+
+    private String[] verifyAndGetTimePeriodForReservation() {
+
         ReservationConflictType status = ReservationConflictType.BOTH;
 
         System.out.println("Add reservation wizard started. Type anytime !cancel to stop it");
-
+        String[] blankResult = {"!cancel"};
         String timeFrom = "";
         String timeTo = "";
 
@@ -174,34 +251,28 @@ public class ReservationController {
                     break;
                 }
             }
-            status = isGivenReservationTimeAvailable(timeFrom, timeTo);
-            switch (status) {
-                case INITIAL:
-                    System.out.println("(i) End of other reservation is overlapping with your one");
-                    break;
-                case FINISH:
-                    System.out.println("(i) Beginning of other reservation is overlapping with your one");
-                    break;
-                case BOTH:
-                    System.out.println("(i) Whole other reservation is overlapping with your one");
-                    break;
-                case NONE:
-                    System.out.println("(i) This time is available");
-                    break;
+            if (areGivenTimesValid(timeFrom, timeTo)) {
+                status = isGivenReservationTimeAvailable(timeFrom, timeTo);
+                switch (status) {
+                    case INITIAL:
+                        System.out.println("(i) End of other reservation is overlapping with your one");
+                        break;
+                    case FINISH:
+                        System.out.println("(i) Beginning of other reservation is overlapping with your one");
+                        break;
+                    case BOTH:
+                        System.out.println("(i) Whole other reservation is overlapping with your one");
+                        break;
+                    case NONE:
+                        System.out.println("(i) This time is available");
+                        String[] results = new String[2];
+                        results[0] = timeFrom;
+                        results[1] = timeTo;
+                        return results;
+                }
             }
         }
-
-    }
-
-    private String retrieveTime(String kind) {
-        String time;
-        do {
-            time = Choices.getInput("Reservation " + kind + " at: ");
-            if (time.equals("!cancel")) {
-                return time;
-            }
-        } while (time.isEmpty() || Convertors.convertTimeStringToMinutesInt(time) == -1);
-        return time;
+        return blankResult;
     }
 
     private void deleteReservation() {
@@ -342,8 +413,19 @@ public class ReservationController {
         return sdf.format(actualDate);
     }
 
-    private boolean isTimeInverted() {
-        return true;
+    private boolean areGivenTimesValid(String t1, String t2) {
+        int time1 = Convertors.convertTimeStringToMinutesInt(t1);
+        int time2 = Convertors.convertTimeStringToMinutesInt(t2);
+
+        if (time1 >= time2) {
+            System.out.println("(!) You entered times in inverted order");
+            return false;
+        } else if (time2 - time1 < 15) {
+            System.out.println("(!) Shortest possible reservation is at least 15 minutes");
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
