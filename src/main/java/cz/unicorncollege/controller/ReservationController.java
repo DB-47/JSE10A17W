@@ -144,7 +144,8 @@ public class ReservationController {
     }
 
     private void addNewReservation() {
-
+        addFewTestReservations();
+        System.out.println("Some test reservations added");
     }
 
     private void deleteReservation() {
@@ -186,13 +187,13 @@ public class ReservationController {
             } while (reservationChoice == null);
 
             String eraseDecision = Choices.getInput("Are you sure, you want to erase this reservation? (type true,y,yes,a to confirm) ");
-            if(Convertors.convertWordToBoolean(eraseDecision)){
-            int idForErase = choiceToId.get(reservationChoice);
-            actualMeetingRoom.getReservations().remove(idForErase);
-            System.out.println("This reservation was removed");
-            }else{
-                System.out.println("No data was changed");   
-            }   
+            if (Convertors.convertWordToBoolean(eraseDecision)) {
+                int idForErase = choiceToId.get(reservationChoice);
+                actualMeetingRoom.getReservations().remove(idForErase);
+                System.out.println("This reservation was removed");
+            } else {
+                System.out.println("No data was changed");
+            }
         } else {
             System.out.println("(i) Meeting room " + actualMeetingRoom.getName() + " has no reservation for this date: " + getFormattedDate());
         }
@@ -233,8 +234,7 @@ public class ReservationController {
                     listReservationsByDate(actualDate, true);
                     break;
                 case 3:
-                    addFewTestReservations();
-                    System.out.println("Some test reservations added");
+                    addNewReservation();
                     break;
                 case 4:
                     editReservation();
