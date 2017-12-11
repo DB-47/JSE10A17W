@@ -146,6 +146,62 @@ public class ReservationController {
     private void addNewReservation() {
         addFewTestReservations();
         System.out.println("Some test reservations added");
+        //Let's assume for now, is in conflict
+        ReservationConflictType status = ReservationConflictType.BOTH;
+
+        System.out.println("Add reservation wizard started. Type anytime !cancel to stop it");
+
+        String timeFrom = "";
+        String timeTo = "";
+
+        while (status != ReservationConflictType.NONE) {
+            if (status != ReservationConflictType.NONE) {
+                do {
+                    timeFrom = retrieveTime("begins");
+                } while (timeFrom.isEmpty());
+            }
+            if (timeFrom.equals("!cancel")) {
+                System.out.println("(i) Reservation add wizard stopped");
+                break;
+            } else {
+                if (status != ReservationConflictType.NONE) {
+                    do {
+                        timeTo = retrieveTime("ends");
+                    } while (timeTo.isEmpty());
+                }
+                if (timeTo.equals("!cancel")) {
+                    System.out.println("(i) Reservation add wizard stopped");
+                    break;
+                }
+            }
+            status = isGivenReservationTimeAvailable(timeFrom, timeTo);
+            switch (status) {
+                case INITIAL:
+                    System.out.println("(i) End of other reservation is overlapping with your one");
+                    break;
+                case FINISH:
+                    System.out.println("(i) Beginning of other reservation is overlapping with your one");
+                    break;
+                case BOTH:
+                    System.out.println("(i) Whole other reservation is overlapping with your one");
+                    break;
+                case NONE:
+                    System.out.println("(i) This time is available");
+                    break;
+            }
+        }
+
+    }
+
+    private String retrieveTime(String kind) {
+        String time;
+        do {
+            time = Choices.getInput("Reservation " + kind + " at: ");
+            if (time.equals("!cancel")) {
+                return time;
+            }
+        } while (time.isEmpty() || Convertors.convertTimeStringToMinutesInt(time) == -1);
+        return time;
     }
 
     private void deleteReservation() {
@@ -286,6 +342,10 @@ public class ReservationController {
         return sdf.format(actualDate);
     }
 
+    private boolean isTimeInverted() {
+        return true;
+    }
+
     /**
      * This method takes initial and finish time of new reservation and verifies
      * if wanted time is available. Available time is time, where no other
@@ -296,14 +356,18 @@ public class ReservationController {
      *
      * @return true if reservation makes no conflicts, otherwise false
      */
-    private ReservationConflictType isGivenReservationTimeAvailable(int newInitialTime, int newFinishTime) {
+    private ReservationConflictType isGivenReservationTimeAvailable(String t1, String t2) {
+        int newInitialTime = Convertors.convertTimeStringToMinutesInt(t1);
+        int newFinishTime = Convertors.convertTimeStringToMinutesInt(t2);
         for (Reservation r : actualMeetingRoom.getSortedReservationsByDate(actualDate)) {
             int existingInitialTime = Convertors.convertTimeStringToMinutesInt(r.getTimeFrom());
             int existingFinishTime = Convertors.convertTimeStringToMinutesInt(r.getTimeTo());
             //Does initial time of already saved reservation belong to new Reservation?
-            boolean existingReservationOverlapAtItsBegin = existingInitialTime >= newInitialTime && existingInitialTime <= newFinishTime;
+            boolean existingReservationOverlapAtItsBegin = (newInitialTime >= existingInitialTime)
+                    && (newInitialTime <= existingFinishTime);
             //Does finish time of already saved reservation belong to new Reservation?
-            boolean existingReservationOverlapAtItsEnd = existingFinishTime >= newInitialTime && existingFinishTime <= newFinishTime;
+            boolean existingReservationOverlapAtItsEnd = (newFinishTime >= existingInitialTime)
+                    && (newFinishTime <= existingFinishTime);
             //If at least one of those timestamps of existing reservation belong to new one, it must be conflict!
             if (existingReservationOverlapAtItsBegin && !existingReservationOverlapAtItsEnd) {
                 //Only finish time of reservation is overlapping, inform other method about this and stop for cycle
