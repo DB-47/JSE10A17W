@@ -25,8 +25,8 @@ public class MeetingController implements Serializable {
 
     /**
      * This method fills in data from default file location and creates MD5 hash
-     * from initial state of master "meetingCentres" map to assure, user will
-     * be warned if he tries to leave changed in-app data without changes
+     * from initial state of master "meetingCentres" map to assure, user will be
+     * warned if he tries to leave changed in-app data without changes
      */
     public void init() {
 
@@ -613,16 +613,16 @@ public class MeetingController implements Serializable {
      * This method provides list of strings, that can be easily serialized. For
      * this program it is inteded mainly for MD5 generation, so we can tell if
      * user has altered in-app data and inform him, if he exits app.
-     * 
+     *
      * It could be used just XML output or implement correct serialization,
      * however this would be slower, so simplifying CSV output generator was
      * easier and faster way to do this
      *
      * @return Provides list of Strings generated from main meetingcontroller
-     * Map. Each row represents each object's params concatenated gaplessly
-     * to next one. So every slight change will lead to difference, which will
-     * be recognised when creating MD5 hash. This data is not intended to be
-     * used anywhere else than Hash generating
+     * Map. Each row represents each object's params concatenated gaplessly to
+     * next one. So every slight change will lead to difference, which will be
+     * recognised when creating MD5 hash. This data is not intended to be used
+     * anywhere else than Hash generating
      *
      */
     public List<String> provideDataForHashGenerator() {
@@ -657,19 +657,15 @@ public class MeetingController implements Serializable {
                     serializeFriendlyData.add(reservation.getDate().toString());
                     serializeFriendlyData.add(reservation.getTimeFrom());
                     serializeFriendlyData.add(reservation.getTimeTo());
-                    serializeFriendlyData.add(reservation.getExpectedPersonCount()+"");
+                    serializeFriendlyData.add(reservation.getExpectedPersonCount() + "");
                     serializeFriendlyData.add(reservation.getCustomer());
-                    serializeFriendlyData.add(reservation.isNeedVideoConference()+"");
+                    serializeFriendlyData.add(reservation.isNeedVideoConference() + "");
                     serializeFriendlyData.add(reservation.getNote());
                 }
             }
         }
         return serializeFriendlyData;
     }
-
-
-
-
 
     public Map<String, MeetingCentre> getMeetingCentres() {
         return meetingCentres;

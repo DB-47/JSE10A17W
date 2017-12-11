@@ -160,16 +160,18 @@ public class ReservationController {
         }
 
         System.out.println(getActualData());
-        listReservationsByDate(actualDate);
+        listReservationsByDate(actualDate, false);
 
     }
 
     private void getItemsToShow() {
-        listReservationsByDate(actualDate);
+        listReservationsByDate(actualDate, false);
 
         List<String> choices = new ArrayList<>();
-        choices.add("Edit Reservations");
+        choices.add("List reservations again");
+        choices.add("List reservations againg with details");
         choices.add("Add New Reservation");
+        choices.add("Edit Reservations");
         choices.add("Delete Reservation");
         choices.add("Change Date");
         choices.add("Exit");
@@ -177,25 +179,31 @@ public class ReservationController {
         while (true) {
             switch (Choices.getChoice("Select an option: ", choices)) {
                 case 1:
-                    editReservation();
+                    listReservationsByDate(actualDate, false);
                     break;
                 case 2:
+                    listReservationsByDate(actualDate, true);
+                    break;
+                case 3:
                     addFewTestReservations();
                     System.out.println("Some test reservations added");
                     break;
-                case 3:
-                    deleteReservation();
-                    break;
                 case 4:
-                    changeDate();
+                    editReservation();
                     break;
                 case 5:
+                    deleteReservation();
+                    break;
+                case 6:
+                    changeDate();
+                    break;
+                case 7:
                     return;
             }
         }
     }
 
-    private void listReservationsByDate(Date date) {
+    private void listReservationsByDate(Date date, boolean moreDetails) {
         // list reservations
         List<Reservation> list = actualMeetingRoom.getSortedReservationsByDate(date);
         if (list != null && list.size() > 0) {
@@ -203,6 +211,12 @@ public class ReservationController {
             System.out.println("Reservations for " + getActualData());
             for (Reservation reserv : list) {
                 System.out.println(reserv.getFormattedDate() + " FROM " + reserv.getTimeFrom() + " TO " + reserv.getTimeTo());
+                if(moreDetails){
+                    System.out.println("-> " + "Expected person count is: " + reserv.getExpectedPersonCount());
+                    System.out.println("-> " + "Customer name: " + reserv.getCustomer());
+                    System.out.println("-> " + "Customer needs video conference? " + Convertors.convertBooleanToWord(reserv.isNeedVideoConference()));
+                    System.out.println("-> " + "Note: " + reserv.getNote());
+                }
             }
             System.out.println("");
         } else {
