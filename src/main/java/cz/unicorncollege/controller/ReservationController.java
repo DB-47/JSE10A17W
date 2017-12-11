@@ -377,7 +377,7 @@ public class ReservationController {
         choices.add("Show room parameters");
         choices.add("List reservations again");
         choices.add("List reservations againg with details");
-        choices.add("Add New Reservation (MOCKED)");
+        choices.add("Add New Reservation (UNDER TEST)");
         choices.add("Edit Reservations (N/A)");
         choices.add("Delete Reservation");
         choices.add("Change Date");
@@ -518,16 +518,4 @@ public class ReservationController {
         return getCentreAndRoomNames() + ", Date: " + getFormattedDate();
     }
 
-    //This will add few reservations into system until add wizard will be implemented
-    private void addFewTestReservations() {
-        Reservation r3 = new Reservation(actualMeetingRoom, actualDate, "17:15", "17:45", 8, "DL-17", false, "Third");
-        Reservation r4 = new Reservation(actualMeetingRoom, actualDate, "19:00", "22:00", 11, "Magor", false, "Fourth");
-        Reservation r1 = new Reservation(actualMeetingRoom, actualDate, "10:30", "11:00", 5, "DB-47", true, "First");
-        Reservation r2 = new Reservation(actualMeetingRoom, actualDate, "14:30", "15:00", 2, "DK-44", false, "Second");
-
-        actualMeetingRoom.getReservations().add(r1);
-        actualMeetingRoom.getReservations().add(r2);
-        actualMeetingRoom.getReservations().add(r3);
-        actualMeetingRoom.getReservations().add(r4);
-    }
 }
