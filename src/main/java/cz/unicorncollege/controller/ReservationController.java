@@ -8,6 +8,7 @@ import java.util.List;
 import cz.unicorncollege.bt.model.MeetingCentre;
 import cz.unicorncollege.bt.model.MeetingRoom;
 import cz.unicorncollege.bt.model.Reservation;
+import cz.unicorncollege.bt.model.ReservationConflictType;
 import cz.unicorncollege.bt.utils.Choices;
 import cz.unicorncollege.bt.utils.Convertors;
 import java.util.Map;
@@ -142,6 +143,8 @@ public class ReservationController {
     }
     
     private void retrieveTimesFromUser(){
+        Choices.getInput("Enter initial time of your reservation as (HH:MM) ");
+        Choices.getInput("Enter finish time of your reservation as (HH:MM) ");
     }
     
     private void retrieveExpectedPersonsCountFromUser(){
@@ -248,7 +251,7 @@ public class ReservationController {
      *
      * @return true if reservation makes no conflicts, otherwise false
      */
-    private boolean isGivenReservationTimeAvailable(String t1, String t2) {
+    private ReservationConflictType isGivenReservationTimeAvailable(String t1, String t2) {
         int newInitialTime = Convertors.convertTimeStringToMinutesInt(t1);
         int newFinishTime = Convertors.convertTimeStringToMinutesInt(t2);
         for (Reservation r : actualMeetingRoom.getSortedReservationsByDate(actualDate)) {
@@ -259,11 +262,19 @@ public class ReservationController {
             //Does finish time of already saved reservation belong to new Reservation?
             boolean existingReservationOverlapAtItsEnd = existingFinishTime >= newInitialTime && existingFinishTime <= newFinishTime;
             //If at least one of those timestamps of existing reservation belong to new one, it must be conflict!
-            if(existingReservationOverlapAtItsBegin || existingReservationOverlapAtItsEnd){
-                return false;
+            if(existingReservationOverlapAtItsBegin && !existingReservationOverlapAtItsEnd){
+                //Only finish time of reservation is overlapping, inform other method about this and stop for cycle
+                return ReservationConflictType.FINISH;
+            }else if(!existingReservationOverlapAtItsBegin && existingReservationOverlapAtItsEnd){
+                //Only initial time of reservation is overlapping, inform other method about this and stop for cycle
+                return ReservationConflictType.INITIAL;
+            }else if(existingReservationOverlapAtItsBegin && existingReservationOverlapAtItsEnd){
+                //Both times of new reservation failed
+                return ReservationConflictType.BOTH;
             }
         }
-        return true;
+        //You were lucky, no conflict was found :)
+        return ReservationConflictType.NONE;
     }
 
     /**
