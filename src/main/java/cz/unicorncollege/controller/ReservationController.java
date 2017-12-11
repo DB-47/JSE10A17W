@@ -11,7 +11,6 @@ import cz.unicorncollege.bt.model.Reservation;
 import cz.unicorncollege.bt.model.ReservationConflictType;
 import cz.unicorncollege.bt.utils.Choices;
 import cz.unicorncollege.bt.utils.Convertors;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang3.time.DateUtils;
@@ -145,7 +144,6 @@ public class ReservationController {
     }
 
     private void addNewReservation() {
-        //Let's assume for now, is in conflict
         String[] times = verifyAndGetTimePeriodForReservation();
 
         String expectedPersonCountString;
@@ -377,7 +375,7 @@ public class ReservationController {
         choices.add("Show room parameters");
         choices.add("List reservations again");
         choices.add("List reservations againg with details");
-        choices.add("Add New Reservation (UNDER TEST)");
+        choices.add("Add New Reservation");
         choices.add("Edit Reservations (N/A)");
         choices.add("Delete Reservation");
         choices.add("Change Date");
