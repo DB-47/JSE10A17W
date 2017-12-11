@@ -161,7 +161,6 @@ public class ReservationController {
                 choices.add("DATE " + getFormattedDate() + " FROM " + value.getTimeFrom() + " TO " + value.getTimeTo());
                 choiceIndex++;
             }
-            System.out.println(choiceToId);
             Choices.listChoices(choices);
 
             Integer reservationChoice = null;
