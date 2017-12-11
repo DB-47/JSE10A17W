@@ -138,26 +138,9 @@ public class ReservationController {
     }
 
     private void addNewReservation() {
-        // TODO enter data one by one, add new reservation object to the actual
-        // room, than inform about successful adding
+
     }
-    
-    private void retrieveTimesFromUser(){
-        Choices.getInput("Enter initial time of your reservation as (HH:MM) ");
-        Choices.getInput("Enter finish time of your reservation as (HH:MM) ");
-    }
-    
-    private void retrieveExpectedPersonsCountFromUser(){
-    }
-    
-    private void retrieveCustomerNameFromUser(){
-    }
-    
-    private void retrieveVideoConferenceRequirementFromUser(){
-    }
-    
-    private void retrieveNoteFromCustomerFromUserIfNeeded(){
-    }
+
 
     private void deleteReservation() {
         // TODO list all reservations as choices and let enter item for
@@ -246,14 +229,12 @@ public class ReservationController {
      * if wanted time is available. Available time is time, where no other
      * reservation is planned
      *
-     * @param t1 Initial time as String
-     * @param t2 Finish time as String
+     * @param t1 Initial time as minutes from 00:00
+     * @param t2 Finish time as minutes from 00:00
      *
      * @return true if reservation makes no conflicts, otherwise false
      */
-    private ReservationConflictType isGivenReservationTimeAvailable(String t1, String t2) {
-        int newInitialTime = Convertors.convertTimeStringToMinutesInt(t1);
-        int newFinishTime = Convertors.convertTimeStringToMinutesInt(t2);
+    private ReservationConflictType isGivenReservationTimeAvailable(int newInitialTime, int newFinishTime) {
         for (Reservation r : actualMeetingRoom.getSortedReservationsByDate(actualDate)) {
             int existingInitialTime = Convertors.convertTimeStringToMinutesInt(r.getTimeFrom());
             int existingFinishTime = Convertors.convertTimeStringToMinutesInt(r.getTimeTo());
@@ -262,13 +243,13 @@ public class ReservationController {
             //Does finish time of already saved reservation belong to new Reservation?
             boolean existingReservationOverlapAtItsEnd = existingFinishTime >= newInitialTime && existingFinishTime <= newFinishTime;
             //If at least one of those timestamps of existing reservation belong to new one, it must be conflict!
-            if(existingReservationOverlapAtItsBegin && !existingReservationOverlapAtItsEnd){
+            if (existingReservationOverlapAtItsBegin && !existingReservationOverlapAtItsEnd) {
                 //Only finish time of reservation is overlapping, inform other method about this and stop for cycle
                 return ReservationConflictType.FINISH;
-            }else if(!existingReservationOverlapAtItsBegin && existingReservationOverlapAtItsEnd){
+            } else if (!existingReservationOverlapAtItsBegin && existingReservationOverlapAtItsEnd) {
                 //Only initial time of reservation is overlapping, inform other method about this and stop for cycle
                 return ReservationConflictType.INITIAL;
-            }else if(existingReservationOverlapAtItsBegin && existingReservationOverlapAtItsEnd){
+            } else if (existingReservationOverlapAtItsBegin && existingReservationOverlapAtItsEnd) {
                 //Both times of new reservation failed
                 return ReservationConflictType.BOTH;
             }
