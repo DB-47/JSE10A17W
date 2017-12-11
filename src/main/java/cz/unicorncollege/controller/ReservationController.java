@@ -145,8 +145,6 @@ public class ReservationController {
     }
 
     private void addNewReservation() {
-        addFewTestReservations();
-        System.out.println("Some test reservations added");
         //Let's assume for now, is in conflict
         String[] times = verifyAndGetTimePeriodForReservation();
 
@@ -155,26 +153,58 @@ public class ReservationController {
 
         String customer;
 
+        String videoConfString;
+        Boolean videoConf;
+
+        String note;
+
         if (!times[0].equals("!cancel")) {
             expectedPersonCountString = retrieveExpectedPersonCount();
             if (!expectedPersonCountString.equals("!cancel")) {
-                try {
-                    expectedPersonCount = Integer.parseInt(expectedPersonCountString);
-                } catch (NumberFormatException nfe) {
-                    System.out.println("(!) For some reason failed Integer parse");
-                    expectedPersonCount = null;
-                }
+                expectedPersonCount = Integer.parseInt(expectedPersonCountString);
                 String tempCustomer = retrieveCustomer();
                 if (!tempCustomer.equals("!cancel")) {
                     customer = tempCustomer;
+                    videoConfString = retrieveVideoConferenceRequirment();
+                    if (!videoConfString.equals("!cancel")) {
+                        videoConf = Convertors.convertWordToBoolean(videoConfString);
+                        String tempNote = retrieveNote();
+                        if (!tempNote.equals("!cancel")) {
+                            note = tempNote;
+                            Reservation r = new Reservation(actualMeetingRoom, actualDate, times[0], times[1], expectedPersonCount, customer, videoConf, note);
+                            actualMeetingRoom.getReservations().add(r);
+                            System.out.println("Reservation successfully added :)");
+                        }
+                    }
                 }
             }
         }
 
     }
-    
-    private String retrieveVideoConferenceRequirment(){
-        return null;
+
+    private String retrieveNote() {
+        String note = Choices.getInput("Enter note if necessary: ");
+        return note;
+    }
+
+    private String retrieveVideoConferenceRequirment() {
+        String videoConfString;
+        do {
+            videoConfString = Choices.getInput("Do you require video conference possiblity? (Y/N) ");
+            if (videoConfString.equals("!cancel")) {
+                return videoConfString;
+            }
+        } while (videoConfString.isEmpty() || verifyValidityOfVideoConference(videoConfString));
+        return videoConfString;
+    }
+
+    private boolean verifyValidityOfVideoConference(String booleanValue) {
+        if (!actualMeetingRoom.HasVideoConference() && Convertors.convertWordToBoolean(booleanValue)) {
+            System.out.println("(!) This room does not support video conferences");
+            System.out.println("(i) You may either do not require video conference or select other room");
+            return true;
+        }
+        return false;
     }
 
     private String retrieveCustomer() {
@@ -344,6 +374,7 @@ public class ReservationController {
         listReservationsByDate(actualDate, false);
 
         List<String> choices = new ArrayList<>();
+        choices.add("Show room parameters");
         choices.add("List reservations again");
         choices.add("List reservations againg with details");
         choices.add("Add New Reservation (MOCKED)");
@@ -355,24 +386,27 @@ public class ReservationController {
         while (true) {
             switch (Choices.getChoice("Select an option: ", choices)) {
                 case 1:
-                    listReservationsByDate(actualDate, false);
+                    actualMeetingRoom.printRoomParams();
                     break;
                 case 2:
-                    listReservationsByDate(actualDate, true);
+                    listReservationsByDate(actualDate, false);
                     break;
                 case 3:
-                    addNewReservation();
+                    listReservationsByDate(actualDate, true);
                     break;
                 case 4:
-                    editReservation();
+                    addNewReservation();
                     break;
                 case 5:
-                    deleteReservation();
+                    editReservation();
                     break;
                 case 6:
-                    changeDate();
+                    deleteReservation();
                     break;
                 case 7:
+                    changeDate();
+                    break;
+                case 8:
                     return;
             }
         }

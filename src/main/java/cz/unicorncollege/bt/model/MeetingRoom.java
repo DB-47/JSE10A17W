@@ -68,6 +68,13 @@ public class MeetingRoom extends MeetingObject implements Serializable {
     public void setMeetingCentre(MeetingCentre meetingCentre) {
         this.meetingCentre = meetingCentre;
     }
+    
+    public void printRoomParams(){
+        System.out.println(name);
+        System.out.println("-> Description: " + description );
+        System.out.println("-> Capacity is: " + capacity);
+        System.out.println("-> Room supports video conferences: " + Convertors.convertBooleanToWord(hasVideoConference));
+    }
 
     //Methods for third part
     public List<Reservation> getReservations() {
@@ -85,7 +92,6 @@ public class MeetingRoom extends MeetingObject implements Serializable {
                 sortedReservations.put(startTime, reservation);
             }
         }
-//TODO get reservations by date and return sorted reservations by hours
         for (Map.Entry<Integer, Reservation> entry : sortedReservations.entrySet()) {
             Integer key = entry.getKey();
             Reservation value = entry.getValue();
@@ -96,11 +102,10 @@ public class MeetingRoom extends MeetingObject implements Serializable {
     }
 
     /**
-     * This is modified getter, which will retrieve all reservation within
-     * given date. This getter also return reservation with its index in
-     * main List with reservation, so external command can easily delete such
-     * reservation
-     * 
+     * This is modified getter, which will retrieve all reservation within given
+     * date. This getter also return reservation with its index in main List
+     * with reservation, so external command can easily delete such reservation
+     *
      * @param getReservationsWithIndexByDate Date, for which reservations will
      * be retrieved
      *
