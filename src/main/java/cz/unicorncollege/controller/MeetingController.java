@@ -172,6 +172,7 @@ public class MeetingController implements Serializable {
         if (meetingCentres.containsKey(locationFilter)) {
             System.out.println("");
             System.out.println("Are you sure, you want to erase center:" + locationFilter + "?");
+            System.out.println("This will delete also children meeting rooms and their reservations!");
             System.out.println("This can be reverted by typing !cancel, putting negative answer or non-sense");
             System.out.println("");
             String decision = Choices.getInput("Write YES or y or a or true to perform delete action: ");
@@ -550,6 +551,7 @@ public class MeetingController implements Serializable {
         if (meetingCentres.get(center).getMeetingRooms().containsKey(choice)) {
             System.out.println("");
             System.out.println("Are you sure, you want to erase room: " + choice + " ?");
+            System.out.println("If you delete meeting rooms, all its reservations will be deleted also");
             System.out.println("This can be reverted by typing !cancel, putting negative answer or non-sense");
             System.out.println("");
             String decision = Choices.getInput("Write YES or y or a or true to perform delete action: ");

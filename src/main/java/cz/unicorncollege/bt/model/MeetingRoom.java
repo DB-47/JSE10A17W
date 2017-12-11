@@ -4,6 +4,7 @@ import cz.unicorncollege.bt.utils.Convertors;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -92,6 +93,29 @@ public class MeetingRoom extends MeetingObject implements Serializable {
         }
 
         return sortedReservationsAsList;
+    }
+
+    /**
+     * This is modified getter, which will retrieve all reservation within
+     * given date. This getter also return reservation with its index in
+     * main List with reservation, so external command can easily delete such
+     * reservation
+     * 
+     * @param getReservationsWithIndexByDate Date, for which reservations will
+     * be retrieved
+     *
+     * @return Returns map with integer key and reservation instance as value
+     * This key tells, where certain reservation is stored in main reservation
+     * List of MeetingRoom
+     */
+    public Map<Integer, Reservation> getReservationsWithIndexes(Date getReservationsWithIndexByDate) {
+        Map<Integer, Reservation> collectedReservations = new HashMap<>();
+        for (int i = 0; i < reservations.size(); i++) {
+            if (reservations.get(i).getDate().equals(getReservationsWithIndexByDate)) {
+                collectedReservations.put(i, reservations.get(i));
+            }
+        }
+        return collectedReservations;
     }
 
     public void setReservations(List<Reservation> reservations) {

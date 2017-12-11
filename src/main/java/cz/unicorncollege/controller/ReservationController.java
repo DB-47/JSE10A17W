@@ -11,7 +11,9 @@ import cz.unicorncollege.bt.model.Reservation;
 import cz.unicorncollege.bt.model.ReservationConflictType;
 import cz.unicorncollege.bt.utils.Choices;
 import cz.unicorncollege.bt.utils.Convertors;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import org.apache.commons.lang3.time.DateUtils;
 
 public class ReservationController {
 
@@ -20,6 +22,9 @@ public class ReservationController {
     private MeetingRoom actualMeetingRoom;
     private Date actualDate;
 
+    //In my implementation you can create reservation at least n hours before its begin
+    public static final int MINIMAL_TIME_MARGIN = 2; //Hours
+
     /**
      * Constructor for ReservationController class
      *
@@ -27,7 +32,8 @@ public class ReservationController {
      */
     public ReservationController(MeetingController meetingController) {
         this.meetingController = meetingController;
-        this.actualDate = new Date();
+        //Original get date included day time, this method will exclude time of day
+        this.actualDate = DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH);
     }
 
     /**
@@ -141,10 +147,51 @@ public class ReservationController {
 
     }
 
-
     private void deleteReservation() {
-        // TODO list all reservations as choices and let enter item for
-        // deletion, delete it and inform about successful deletion
+        if (!actualMeetingRoom.getReservationsWithIndexes(actualDate).isEmpty()) {
+            Map<Integer, Reservation> availableReservations = actualMeetingRoom.getReservationsWithIndexes(actualDate);
+            Map<Integer, Integer> choiceToId = new LinkedHashMap<>();
+            List<String> choices = new ArrayList<>();
+
+            int choiceIndex = 0;
+            for (Map.Entry<Integer, Reservation> entry : availableReservations.entrySet()) {
+                Integer key = entry.getKey();
+                Reservation value = entry.getValue();
+                choiceToId.put(choiceIndex, key);
+                choices.add("DATE " + getFormattedDate() + " FROM " + value.getTimeFrom() + " TO " + value.getTimeTo());
+                choiceIndex++;
+            }
+            System.out.println(choiceToId);
+            Choices.listChoices(choices);
+
+            Integer reservationChoice = null;
+            do {
+                // get the choice as string to parse it to integer later
+                String chosenOption = Choices.getInput("Choose reservation number to erase: ");
+                try {
+                    if (chosenOption.equals("!cancel")) {
+                        System.out.println("(i) You were redirected back to reservation wizard menu");
+                        return;
+                    } else {
+                        reservationChoice = Integer.parseInt(chosenOption) - 1;
+                    }
+                    if (reservationChoice >= 0 && reservationChoice < choices.size()) {
+                    } else {
+                        System.out.println("(!) Invalid choice, type any number from 1 to " + choices.size());
+                        reservationChoice = null;
+                    }
+                } catch (NumberFormatException nfe) {
+                    System.out.println("(!) You must enter numeric value");
+                }
+            } while (reservationChoice == null);
+
+            int idForErase = choiceToId.get(reservationChoice);
+
+            actualMeetingRoom.getReservations().remove(idForErase);
+            System.out.println("This reservation was removed");
+        } else {
+            System.out.println("(i) Meeting room " + actualMeetingRoom.getName() + " has no reservation for this date: " + getFormattedDate());
+        }
     }
 
     private void changeDate() {
@@ -172,7 +219,7 @@ public class ReservationController {
         choices.add("List reservations againg with details");
         choices.add("Add New Reservation (MOCKED)");
         choices.add("Edit Reservations (N/A)");
-        choices.add("Delete Reservation (N/A)");
+        choices.add("Delete Reservation");
         choices.add("Change Date");
         choices.add("Exit");
 
@@ -211,7 +258,7 @@ public class ReservationController {
             System.out.println("Reservations for " + getActualData());
             for (Reservation reserv : list) {
                 System.out.println(reserv.getFormattedDate() + " FROM " + reserv.getTimeFrom() + " TO " + reserv.getTimeTo());
-                if(moreDetails){
+                if (moreDetails) {
                     System.out.println("-> " + "Expected person count is: " + reserv.getExpectedPersonCount());
                     System.out.println("-> " + "Customer name: " + reserv.getCustomer());
                     System.out.println("-> " + "Customer needs video conference? " + Convertors.convertBooleanToWord(reserv.isNeedVideoConference()));
