@@ -168,13 +168,13 @@ public class ReservationController {
                             note = tempNote;
                             Reservation r = new Reservation(actualMeetingRoom, actualDate, times[0], times[1], expectedPersonCount, customer, videoConf, note);
                             actualMeetingRoom.getReservations().add(r);
-                            System.out.println("Reservation successfully added :)");
+                            System.out.println("Reservation successfully added");
+                            System.out.println("");
                         }
                     }
                 }
             }
         }
-
     }
 
     /**
@@ -444,13 +444,43 @@ public class ReservationController {
         String oldTimeTo = actualMeetingRoom.getReservations().get(idForEdit).getTimeTo();
 
         String[] rawTimes;
+        String newExpectedPersonCountString;
+        String newCustomer;
+        String newNeedVideoConferenceString;
+        String newNote;
 
         System.out.print("Current reservation begins at " + actualMeetingRoom.getReservations().get(idForEdit).getTimeFrom() + " ");
         System.out.print("and ends at " + actualMeetingRoom.getReservations().get(idForEdit).getTimeTo());
         System.out.println("");
         rawTimes = verifyAndGetTimePeriodForReservation(actualMeetingRoom.getSortedReservationsByDate(actualDate, idForEdit), true, oldTimeFrom, oldTimeTo);
 
-        if(!rawTimes[0].equals("!cancel")){
+        if (!rawTimes[0].equals("!cancel")) {
+            newExpectedPersonCountString = retrieveExpectedPersonCount(true);
+            if (!newExpectedPersonCountString.equals("!cancel")) {
+                newCustomer = retrieveCustomer(true);
+                if (!newCustomer.equals("!cancel")) {
+                    newNeedVideoConferenceString = retrieveVideoConferenceRequirment(true);
+                    if (!newNeedVideoConferenceString.equals("!cancel")) {
+                        newNote = retrieveNote();
+                        if(!newNote.equals("!cancel")){
+                            //Zapíšeme nové časy
+                            actualMeetingRoom.getReservations().get(idForEdit).setTimeFrom(rawTimes[0]);
+                            actualMeetingRoom.getReservations().get(idForEdit).setTimeTo(rawTimes[1]);
+                            //Pokud jsme zadali nové číslo, vložme jej do rezervace
+                            if(!newExpectedPersonCountString.isEmpty()){
+                                Integer newExpectedPersonCount = Integer.parseInt(newExpectedPersonCountString);
+                                actualMeetingRoom.getReservations().get(idForEdit).setExpectedPersonCount(newExpectedPersonCount);
+                            }
+                            actualMeetingRoom.getReservations().get(idForEdit).setCustomer(newCustomer);
+                            if(!newNeedVideoConferenceString.isEmpty()){
+                                Boolean newNeedVideoConference = Convertors.convertWordToBoolean(newExpectedPersonCountString);
+                                actualMeetingRoom.getReservations().get(idForEdit).setNeedVideoConference(newNeedVideoConference);
+                            }
+                            actualMeetingRoom.getReservations().get(idForEdit).setNote(newNote);                         
+                        }
+                    }
+                }
+            }
         }
 
     }

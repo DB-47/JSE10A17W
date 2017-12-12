@@ -10,7 +10,7 @@ package cz.unicorncollege.bt.model;
  * @author DB-47-PG
  */
 public enum CRUDOperation {
-    UPDATE, DELETE;
+    UPDATE, DELETE, CREATE, READ;
     
     @Override    
     public String toString() {
