@@ -462,21 +462,25 @@ public class ReservationController {
                     newNeedVideoConferenceString = retrieveVideoConferenceRequirment(true);
                     if (!newNeedVideoConferenceString.equals("!cancel")) {
                         newNote = retrieveNote();
-                        if(!newNote.equals("!cancel")){
-                            //Zapíšeme nové časy
+                        if (!newNote.equals("!cancel")) {
+                            //Zapíšeme nové časy, není třeba je ověřit, vždy budou přítomny
                             actualMeetingRoom.getReservations().get(idForEdit).setTimeFrom(rawTimes[0]);
                             actualMeetingRoom.getReservations().get(idForEdit).setTimeTo(rawTimes[1]);
                             //Pokud jsme zadali nové číslo, vložme jej do rezervace
-                            if(!newExpectedPersonCountString.isEmpty()){
+                            if (!newExpectedPersonCountString.isEmpty()) {
                                 Integer newExpectedPersonCount = Integer.parseInt(newExpectedPersonCountString);
                                 actualMeetingRoom.getReservations().get(idForEdit).setExpectedPersonCount(newExpectedPersonCount);
                             }
-                            actualMeetingRoom.getReservations().get(idForEdit).setCustomer(newCustomer);
-                            if(!newNeedVideoConferenceString.isEmpty()){
+                            if (!newCustomer.isEmpty()) {
+                                actualMeetingRoom.getReservations().get(idForEdit).setCustomer(newCustomer);
+                            }
+                            if (!newNeedVideoConferenceString.isEmpty()) {
                                 Boolean newNeedVideoConference = Convertors.convertWordToBoolean(newExpectedPersonCountString);
                                 actualMeetingRoom.getReservations().get(idForEdit).setNeedVideoConference(newNeedVideoConference);
                             }
-                            actualMeetingRoom.getReservations().get(idForEdit).setNote(newNote);                         
+                            if(!newNote.isEmpty()){
+                            actualMeetingRoom.getReservations().get(idForEdit).setNote(newNote);
+                            }
                         }
                     }
                 }
