@@ -36,8 +36,8 @@ public class MainController {
         List<String> choices = new ArrayList<>();
         choices.add("List all Meeting Centres");
         choices.add("Add new Meeting Centre");
-        choices.add("Import Data");
-        choices.add("Exit and Save");
+        choices.add("Import Data (CSV)");
+        choices.add("Exit and Save (CSV)");
         choices.add("Exit");
         choices.add("Reservations ");
         choices.add("Export resrvations into JSON (N/A)");

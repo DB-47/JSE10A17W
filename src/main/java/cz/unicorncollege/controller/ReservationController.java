@@ -140,7 +140,7 @@ public class ReservationController {
     }
 
     private void addNewReservation() {
-        String[] times = verifyAndGetTimePeriodForReservation();
+        String[] times = verifyAndGetTimePeriodForReservation(actualMeetingRoom.getSortedReservationsByDate(actualDate));
 
         String expectedPersonCountString;
         Integer expectedPersonCount;
@@ -311,7 +311,7 @@ public class ReservationController {
         return time;
     }
 
-    private String[] verifyAndGetTimePeriodForReservation() {
+    private String[] verifyAndGetTimePeriodForReservation(List<Reservation> otherReservations) {
 
         ReservationConflictType status = ReservationConflictType.BOTH;
 
@@ -341,7 +341,7 @@ public class ReservationController {
                 }
             }
             if (areGivenTimesValid(timeFrom, timeTo)) {
-                status = isGivenReservationTimeAvailable(timeFrom, timeTo);
+                status = isGivenReservationTimeAvailable(timeFrom, timeTo, otherReservations);
                 switch (status) {
                     case INITIAL:
                         System.out.println("(i) End of other reservation is overlapping with your one");
@@ -579,7 +579,7 @@ public class ReservationController {
      *
      * @return true if reservation makes no conflicts, otherwise false
      */
-    private ReservationConflictType isGivenReservationTimeAvailable(String t1, String t2) {
+    private ReservationConflictType isGivenReservationTimeAvailable(String t1, String t2, List<Reservation> otherReservations) {
         int newInitialTime = Convertors.convertTimeStringToMinutesInt(t1);
         int newFinishTime = Convertors.convertTimeStringToMinutesInt(t2);
         for (Reservation r : actualMeetingRoom.getSortedReservationsByDate(actualDate)) {
