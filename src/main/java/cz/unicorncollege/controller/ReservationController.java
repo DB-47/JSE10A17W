@@ -268,7 +268,7 @@ public class ReservationController {
         do {
             countString = Choices.getInput("Enter count of persons using this reservation: ");
             if (countString.equals("!cancel")) {
-                System.out.println("(i) Reservation add wizard stopped");
+                System.out.println("(i) Reservation CRUD wizard stopped");
                 return countString;
             }
             if (countString.isEmpty() && update) {
@@ -334,7 +334,7 @@ public class ReservationController {
                 } while (timeFrom.isEmpty());
             }
             if (timeFrom.equals("!cancel")) {
-                System.out.println("(i) Reservation add wizard stopped");
+                System.out.println("(i) Reservation CRUD wizard stopped");
                 break;
             } else {
                 if (status != ReservationConflictType.NONE) {
@@ -346,7 +346,7 @@ public class ReservationController {
                     } while (timeTo.isEmpty());
                 }
                 if (timeTo.equals("!cancel")) {
-                    System.out.println("(i) Reservation add wizard stopped");
+                    System.out.println("(i) Reservation CRUD wizard stopped");
                     break;
                 }
             }
@@ -463,10 +463,8 @@ public class ReservationController {
                     if (!newNeedVideoConferenceString.equals("!cancel")) {
                         newNote = retrieveNote();
                         if (!newNote.equals("!cancel")) {
-                            //Zapíšeme nové časy, není třeba je ověřit, vždy budou přítomny
                             actualMeetingRoom.getReservations().get(idForEdit).setTimeFrom(rawTimes[0]);
                             actualMeetingRoom.getReservations().get(idForEdit).setTimeTo(rawTimes[1]);
-                            //Pokud jsme zadali nové číslo, vložme jej do rezervace
                             if (!newExpectedPersonCountString.isEmpty()) {
                                 Integer newExpectedPersonCount = Integer.parseInt(newExpectedPersonCountString);
                                 actualMeetingRoom.getReservations().get(idForEdit).setExpectedPersonCount(newExpectedPersonCount);
@@ -481,6 +479,7 @@ public class ReservationController {
                             if(!newNote.isEmpty()){
                             actualMeetingRoom.getReservations().get(idForEdit).setNote(newNote);
                             }
+                            System.out.println("(i) Data sucessfully updated");
                         }
                     }
                 }
@@ -522,7 +521,7 @@ public class ReservationController {
         choices.add("List reservations again");
         choices.add("List reservations againg with details");
         choices.add("Add New Reservation");
-        choices.add("Edit Reservations (N/A)");
+        choices.add("Edit Reservation");
         choices.add("Delete Reservation");
         choices.add("Change Date");
         choices.add("Exit");
