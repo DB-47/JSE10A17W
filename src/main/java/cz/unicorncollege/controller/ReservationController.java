@@ -428,17 +428,18 @@ public class ReservationController {
         System.out.println("This reservation was removed");
     }
 
-    private void editReservation() {
-        System.out.println("Not supported yet");
+    private void editReservation(int idForEdit) {
+        System.out.println("(i) ");
+        System.out.println("(i) Not supported yet");
     }
 
-    private void selectMethodByEnum(CRUDOperation operation, int idForErase) {
+    private void selectMethodByEnum(CRUDOperation operation, int id) {
         switch (operation) {
             case DELETE:
-                deleteReservation(idForErase);
+                deleteReservation(id);
                 break;
             case UPDATE:
-                editReservation();
+                editReservation(id);
                 break;
         }
     }
