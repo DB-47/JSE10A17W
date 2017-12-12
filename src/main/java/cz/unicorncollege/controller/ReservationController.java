@@ -1,5 +1,6 @@
 package cz.unicorncollege.controller;
 
+import cz.unicorncollege.bt.model.CRUDOperation;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -138,30 +139,7 @@ public class ReservationController {
         getItemsToShow();
     }
 
-    private void editReservation() {
-        // TODO list reservation as choices, after chosen reservation edit all
-        // relevant attributes
-        System.out.println("You may exit by typing !cancel instead of number");
-        if (!actualMeetingRoom.getReservationsWithIndexes(actualDate).isEmpty()) {
-            Map<Integer, Reservation> availableReservations = actualMeetingRoom.getReservationsWithIndexes(actualDate);
-            Map<Integer, Integer> choiceToId = new LinkedHashMap<>();
-            List<String> choices = new ArrayList<>();
-
-            int choiceIndex = 0;
-            for (Map.Entry<Integer, Reservation> entry : availableReservations.entrySet()) {
-                Integer key = entry.getKey();
-                Reservation value = entry.getValue();
-                choiceToId.put(choiceIndex, key);
-                choices.add("DATE " + getFormattedDate() + " FROM " + value.getTimeFrom() + " TO " + value.getTimeTo());
-                choiceIndex++;
-            }
-            Choices.listChoices(choices);
-
-        }
-    }
-
-    
-
+    //boolean commitOfCperationOnChoice, String name
     private void addNewReservation() {
         String[] times = verifyAndGetTimePeriodForReservation();
 
@@ -388,7 +366,7 @@ public class ReservationController {
         return blankResult;
     }
 
-    private void deleteReservation() {
+    private void deleteOrUpdateReservation(boolean commitOfCperationOnChoice, CRUDOperation operation) {
         System.out.println("You may exit by typing !cancel instead of number");
         if (!actualMeetingRoom.getReservationsWithIndexes(actualDate).isEmpty()) {
             Map<Integer, Reservation> availableReservations = actualMeetingRoom.getReservationsWithIndexes(actualDate);
@@ -408,7 +386,7 @@ public class ReservationController {
             Integer reservationChoice = null;
             do {
                 // get the choice as string to parse it to integer later
-                String chosenOption = Choices.getInput("Choose reservation number to erase: ");
+                String chosenOption = Choices.getInput("Choose reservation number to " + operation.toString() + ": ");
                 try {
                     if (chosenOption.equals("!cancel")) {
                         System.out.println("(i) You were redirected back to reservation wizard menu");
@@ -425,17 +403,43 @@ public class ReservationController {
                     System.out.println("(!) You must enter numeric value");
                 }
             } while (reservationChoice == null);
+            if (commitOfCperationOnChoice) {
 
-            String eraseDecision = Choices.getInput("Are you sure, you want to erase this reservation? (type true,y,yes,a to confirm) ");
-            if (Convertors.convertWordToBoolean(eraseDecision)) {
-                int idForErase = choiceToId.get(reservationChoice);
-                actualMeetingRoom.getReservations().remove(idForErase);
-                System.out.println("This reservation was removed");
+                String eraseDecision = Choices.getInput("Are you sure, you want to " + operation.toString() + " this reservation? (type true,y,yes,a to confirm) ");
+                if (Convertors.convertWordToBoolean(eraseDecision)) {
+                    int idForErase = choiceToId.get(reservationChoice);
+                    //Spusť metodu s dotázáním o jejím provedení
+                    selectMethodByEnum(operation, idForErase);
+                } else {
+                    System.out.println("No data was changed");
+                }
             } else {
-                System.out.println("No data was changed");
+                int idForErase = choiceToId.get(reservationChoice);
+                //Spusť metodu ihned
+                selectMethodByEnum(operation, idForErase);
             }
         } else {
             System.out.println("(i) Meeting room " + actualMeetingRoom.getName() + " has no reservation for this date: " + getFormattedDate());
+        }
+    }
+
+    private void deleteReservation(int idForErase) {
+        actualMeetingRoom.getReservations().remove(idForErase);
+        System.out.println("This reservation was removed");
+    }
+
+    private void editReservation() {
+        System.out.println("Not supported yet");
+    }
+
+    private void selectMethodByEnum(CRUDOperation operation, int idForErase) {
+        switch (operation) {
+            case DELETE:
+                deleteReservation(idForErase);
+                break;
+            case UPDATE:
+                editReservation();
+                break;
         }
     }
 
@@ -481,10 +485,10 @@ public class ReservationController {
                     addNewReservation();
                     break;
                 case 5:
-                    editReservation();
+                    deleteOrUpdateReservation(false, CRUDOperation.UPDATE);
                     break;
                 case 6:
-                    deleteReservation();
+                    deleteOrUpdateReservation(true, CRUDOperation.DELETE);
                     break;
                 case 7:
                     changeDate();
