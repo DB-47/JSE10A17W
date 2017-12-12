@@ -141,7 +141,7 @@ public class ReservationController {
     }
 
     private void addNewReservation() {
-        String[] times = verifyAndGetTimePeriodForReservation(actualMeetingRoom.getSortedReservationsByDate(actualDate));
+        String[] times = verifyAndGetTimePeriodForReservation(actualMeetingRoom.getSortedReservationsByDate(actualDate), false, "", "");
 
         String expectedPersonCountString;
         Integer expectedPersonCount;
@@ -301,30 +301,36 @@ public class ReservationController {
      * returned ALWAYS. If update variable is true, empty string is returned
      * (useful for updates).
      */
-    private String retrieveTime(String kind) {
+    private String retrieveTime(String kind, boolean update) {
         String time;
         do {
             time = Choices.getInput("Reservation " + kind + " at: ");
             if (time.equals("!cancel")) {
                 return time;
             }
+            if (time.isEmpty()) {
+                return time;
+            }
         } while (time.isEmpty() || Convertors.convertTimeStringToMinutesInt(time) == -1);
         return time;
     }
 
-    private String[] verifyAndGetTimePeriodForReservation(List<Reservation> otherReservations) {
+    private String[] verifyAndGetTimePeriodForReservation(List<Reservation> otherReservations, boolean update, String givenTimeFrom, String givenTimeTo) {
 
         ReservationConflictType status = ReservationConflictType.BOTH;
 
         System.out.println("Add reservation wizard started. Type anytime !cancel to stop it");
-        String[] blankResult = {"!cancel"};
-        String timeFrom = "";
-        String timeTo = "";
+        String[] cancelResult = {"!cancel"};
+        String timeFrom = givenTimeFrom;
+        String timeTo = givenTimeTo;
 
         while (status != ReservationConflictType.NONE) {
             if (status != ReservationConflictType.NONE) {
                 do {
-                    timeFrom = retrieveTime("begins");
+                    timeFrom = retrieveTime("begins", update);
+                    if (timeFrom.isEmpty()) {
+                        timeFrom = givenTimeFrom;
+                    }
                 } while (timeFrom.isEmpty());
             }
             if (timeFrom.equals("!cancel")) {
@@ -333,7 +339,10 @@ public class ReservationController {
             } else {
                 if (status != ReservationConflictType.NONE) {
                     do {
-                        timeTo = retrieveTime("ends");
+                        timeTo = retrieveTime("ends", update);
+                        if (timeTo.isEmpty()) {
+                            timeTo = givenTimeTo;
+                        }
                     } while (timeTo.isEmpty());
                 }
                 if (timeTo.equals("!cancel")) {
@@ -354,7 +363,6 @@ public class ReservationController {
                         System.out.println("(i) Whole other reservation is overlapping with your one");
                         break;
                     case NONE:
-                        System.out.println("(i) This time is available");
                         System.out.println("(i) You will be asked to fill additional information");
                         String[] results = new String[2];
                         results[0] = timeFrom;
@@ -363,11 +371,10 @@ public class ReservationController {
                 }
             }
         }
-        return blankResult;
+        return cancelResult;
     }
 
     private void deleteOrUpdateReservation(boolean commitOfCperationOnChoice, CRUDOperation operation) {
-        System.out.println("You may exit by typing !cancel instead of number");
         if (!actualMeetingRoom.getReservationsWithIndexes(actualDate).isEmpty()) {
             Map<Integer, Reservation> availableReservations = actualMeetingRoom.getReservationsWithIndexes(actualDate);
             Map<Integer, Integer> choiceToId = new LinkedHashMap<>();
@@ -429,14 +436,22 @@ public class ReservationController {
     }
 
     private void editReservation(int idForEdit) {
+        System.out.println("If you want to keep same value as it was, leave it blank during edit");
+        System.out.println("If you want to cancel edit process type !cancel and all changes will be thrown away");
+        System.out.println("");
 
-        String[] times = new String[2];
+        String oldTimeFrom = actualMeetingRoom.getReservations().get(idForEdit).getTimeFrom();
+        String oldTimeTo = actualMeetingRoom.getReservations().get(idForEdit).getTimeTo();
 
-        if(Convertors.convertWordToBoolean(Choices.getInput("Do you want to change also time of reservation? (Y/N)"))){
-            times = verifyAndGetTimePeriodForReservation(actualMeetingRoom.getSortedReservationsByDate(actualDate, idForEdit));           
+        String[] rawTimes;
+
+        System.out.print("Current reservation begins at " + actualMeetingRoom.getReservations().get(idForEdit).getTimeFrom() + " ");
+        System.out.print("and ends at " + actualMeetingRoom.getReservations().get(idForEdit).getTimeTo());
+        System.out.println("");
+        rawTimes = verifyAndGetTimePeriodForReservation(actualMeetingRoom.getSortedReservationsByDate(actualDate, idForEdit), true, oldTimeFrom, oldTimeTo);
+
+        if(!rawTimes[0].equals("!cancel")){
         }
-        
-        System.out.println(Arrays.toString(times));
 
     }
 
@@ -587,7 +602,7 @@ public class ReservationController {
                 //Only initial time of reservation is overlapping, inform other method about this and stop for cycle
                 return ReservationConflictType.INITIAL;
             } else if (existingReservationOverlapAtItsBegin && existingReservationOverlapAtItsEnd) {
-                //Both times of new reservation failed
+                //Both rawTimes of new reservation failed
                 return ReservationConflictType.BOTH;
             }
         }
