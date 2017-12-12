@@ -144,7 +144,7 @@ public class ReservationController {
     }
 
     private void addNewReservation() {
-        String[] times = verifyAndGetTimePeriodForReservation();
+        String[] times = verifyAndGetTimePeriodForReservation(false);
 
         String expectedPersonCountString;
         Integer expectedPersonCount;
@@ -157,13 +157,13 @@ public class ReservationController {
         String note;
 
         if (!times[0].equals("!cancel")) {
-            expectedPersonCountString = retrieveExpectedPersonCount();
+            expectedPersonCountString = retrieveExpectedPersonCount(false);
             if (!expectedPersonCountString.equals("!cancel")) {
                 expectedPersonCount = Integer.parseInt(expectedPersonCountString);
-                String tempCustomer = retrieveCustomer();
+                String tempCustomer = retrieveCustomer(false);
                 if (!tempCustomer.equals("!cancel")) {
                     customer = tempCustomer;
-                    videoConfString = retrieveVideoConferenceRequirment();
+                    videoConfString = retrieveVideoConferenceRequirment(false);
                     if (!videoConfString.equals("!cancel")) {
                         videoConf = Convertors.convertWordToBoolean(videoConfString);
                         String tempNote = retrieveNote();
@@ -180,16 +180,40 @@ public class ReservationController {
 
     }
 
+     /**
+     * Method retrieves from user input in order to get string output for 
+     * processing it later
+     * 
+     * @return
+     * Given note, for now in both create, update operations is empty input returned
+     */
     private String retrieveNote() {
         String note = Choices.getInput("Enter note if necessary: ");
         return note;
     }
 
-    private String retrieveVideoConferenceRequirment() {
+    /**
+     * Method retrieves from user input in order to get string output for 
+     * processing it later
+     * 
+     * @param update If true, method will act as update, this means empty input
+     * is allowed and will be also returned
+     *
+     * @return
+     * String with granted possibility to parse it to boolean without
+     * breaking business logic (for instance, allowing video conference in room
+     * without video conference possiblity). In case user inputs keyword
+     * !cancel, it will be returned ALWAYS. If update is true, empty
+     * string is returned (useful for updates)
+     */
+    private String retrieveVideoConferenceRequirment(boolean update) {
         String videoConfString;
         do {
             videoConfString = Choices.getInput("Do you require video conference possiblity? (Y/N) ");
             if (videoConfString.equals("!cancel")) {
+                return videoConfString;
+            }
+            if (videoConfString.isEmpty() && update) {
                 return videoConfString;
             }
         } while (videoConfString.isEmpty() || verifyValidityOfVideoConference(videoConfString));
@@ -205,23 +229,53 @@ public class ReservationController {
         return false;
     }
 
-    private String retrieveCustomer() {
+     /**
+     * Method retrieves from user input in order to get string output for 
+     * processing it later
+     * 
+     * @param update If true, method will act as update, this means empty input
+     * is allowed and will be also returned
+     *
+     * @return
+     * Returns customer name as string. In case user inputs keyword
+     * !cancel, it will be returned ALWAYS. If update variable is true, empty
+     * string is returned (useful for updates)
+     */
+    private String retrieveCustomer(boolean update) {
         String customer;
         do {
             customer = Choices.getInput("Enter name of customer: ");
             if (customer.equals("!cancel")) {
                 return customer;
             }
+            if(customer.isEmpty() && update){
+                return customer;
+            }
         } while (customer.isEmpty());
         return customer;
     }
 
-    private String retrieveExpectedPersonCount() {
+     /**
+     * Method retrieves from user input in order to get string output for 
+     * processing it later
+     * 
+     * @param update If true, method will act as update, this means empty input
+     * is allowed and will be also returned
+     *
+     * @return
+     * Returns count of expected persons as string, that can be safely parsed to Integer.
+     * In case user inputs keyword !cancel, it will be returned ALWAYS. If update variable is true, empty
+     * string is returned (useful for updates). Last two outputs are as expected NOT PARSABLE to Integer
+     */
+    private String retrieveExpectedPersonCount(boolean update) {
         String countString;
         do {
             countString = Choices.getInput("Enter count of persons using this reservation: ");
             if (countString.equals("!cancel")) {
                 System.out.println("(i) Reservation add wizard stopped");
+                return countString;
+            }
+            if(countString.isEmpty() && update){
                 return countString;
             }
         } while (countString.isEmpty() || !verifyExpectedPersonCount(countString));
@@ -239,7 +293,19 @@ public class ReservationController {
         return result <= actualMeetingRoom.getCapacity() && result >= 1;
     }
 
-    private String retrieveTime(String kind) {
+     /**
+     * Method retrieves from user input in order to get string output for 
+     * processing it later
+     * 
+     * @param update If true, method will act as update, this means empty input
+     * is allowed and will be also returned
+     *
+     * @return
+     * Returns count of expected persons as string, that can be safely parsed to Integer.
+     * In case user inputs keyword !cancel, it will be returned ALWAYS. If update variable is true, empty
+     * string is returned (useful for updates).
+     */
+    private String retrieveTime(String kind, boolean update) {
         String time;
         do {
             time = Choices.getInput("Reservation " + kind + " at: ");
@@ -250,7 +316,7 @@ public class ReservationController {
         return time;
     }
 
-    private String[] verifyAndGetTimePeriodForReservation() {
+    private String[] verifyAndGetTimePeriodForReservation(boolean update) {
 
         ReservationConflictType status = ReservationConflictType.BOTH;
 
@@ -262,7 +328,7 @@ public class ReservationController {
         while (status != ReservationConflictType.NONE) {
             if (status != ReservationConflictType.NONE) {
                 do {
-                    timeFrom = retrieveTime("begins");
+                    timeFrom = retrieveTime("begins", update);
                 } while (timeFrom.isEmpty());
             }
             if (timeFrom.equals("!cancel")) {
@@ -271,7 +337,7 @@ public class ReservationController {
             } else {
                 if (status != ReservationConflictType.NONE) {
                     do {
-                        timeTo = retrieveTime("ends");
+                        timeTo = retrieveTime("ends", update);
                     } while (timeTo.isEmpty());
                 }
                 if (timeTo.equals("!cancel")) {
