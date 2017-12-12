@@ -139,7 +139,6 @@ public class ReservationController {
         getItemsToShow();
     }
 
-    //boolean commitOfCperationOnChoice, String name
     private void addNewReservation() {
         String[] times = verifyAndGetTimePeriodForReservation();
 
@@ -429,8 +428,28 @@ public class ReservationController {
     }
 
     private void editReservation(int idForEdit) {
-        System.out.println("(i) ");
-        System.out.println("(i) Not supported yet");
+ 
+        Reservation currentR = actualMeetingRoom.getReservations().get(idForEdit);
+        
+        String currentTimeFrom = currentR.getTimeFrom();
+        String currentTimeTo = currentR.getTimeTo();
+        int currentExcpectedPersonCount = currentR.getExpectedPersonCount();
+        String currentCustomer = currentR.getCustomer();
+        boolean currentNeedVideoConference = currentR.isNeedVideoConference();
+        String currentNote = currentR.getNote();
+        
+        String newTimeFrom = "";
+        String newTimeTo = "";
+        
+        Integer newExpectedPersonCount = null;
+        
+        String newCustomer = "";
+        
+        Boolean newNeedVideoConference = null;
+        String newNote = ""; 
+        
+        
+        
     }
 
     private void selectMethodByEnum(CRUDOperation operation, int id) {
