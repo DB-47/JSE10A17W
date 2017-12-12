@@ -68,10 +68,10 @@ public class MeetingRoom extends MeetingObject implements Serializable {
     public void setMeetingCentre(MeetingCentre meetingCentre) {
         this.meetingCentre = meetingCentre;
     }
-    
-    public void printRoomParams(){
+
+    public void printRoomParams() {
         System.out.println(name);
-        System.out.println("-> Description: " + description );
+        System.out.println("-> Description: " + description);
         System.out.println("-> Capacity is: " + capacity);
         System.out.println("-> Room supports video conferences: " + Convertors.convertBooleanToWord(hasVideoConference));
     }
@@ -92,6 +92,27 @@ public class MeetingRoom extends MeetingObject implements Serializable {
                 sortedReservations.put(startTime, reservation);
             }
         }
+        for (Map.Entry<Integer, Reservation> entry : sortedReservations.entrySet()) {
+            Integer key = entry.getKey();
+            Reservation value = entry.getValue();
+            sortedReservationsAsList.add(value);
+        }
+
+        return sortedReservationsAsList;
+    }
+
+    public List<Reservation> getSortedReservationsByDate(Date getSortedReservationsByDate, int excludedReservationId) {
+        //I am too lazy to implement sorting, let it TreeMap do it for me :)
+        Map<Integer, Reservation> sortedReservations = new TreeMap<>();
+        List<Reservation> sortedReservationsAsList = new ArrayList<>();
+
+        for (int i = 0; i < reservations.size(); i++) {
+            if (reservations.get(i).getDate().equals(getSortedReservationsByDate) && i != excludedReservationId) {
+                Integer startTime = Convertors.convertTimeStringToMinutesInt(reservations.get(i).getTimeFrom());
+                sortedReservations.put(startTime, reservations.get(i));
+            }
+        }
+
         for (Map.Entry<Integer, Reservation> entry : sortedReservations.entrySet()) {
             Integer key = entry.getKey();
             Reservation value = entry.getValue();

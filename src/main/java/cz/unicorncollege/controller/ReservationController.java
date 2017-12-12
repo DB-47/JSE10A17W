@@ -12,6 +12,7 @@ import cz.unicorncollege.bt.model.Reservation;
 import cz.unicorncollege.bt.model.ReservationConflictType;
 import cz.unicorncollege.bt.utils.Choices;
 import cz.unicorncollege.bt.utils.Convertors;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang3.time.DateUtils;
@@ -428,28 +429,15 @@ public class ReservationController {
     }
 
     private void editReservation(int idForEdit) {
- 
-        Reservation currentR = actualMeetingRoom.getReservations().get(idForEdit);
+
+        String[] times = new String[2];
+
+        if(Convertors.convertWordToBoolean(Choices.getInput("Do you want to change also time of reservation? (Y/N)"))){
+            times = verifyAndGetTimePeriodForReservation(actualMeetingRoom.getSortedReservationsByDate(actualDate, idForEdit));           
+        }
         
-        String currentTimeFrom = currentR.getTimeFrom();
-        String currentTimeTo = currentR.getTimeTo();
-        int currentExcpectedPersonCount = currentR.getExpectedPersonCount();
-        String currentCustomer = currentR.getCustomer();
-        boolean currentNeedVideoConference = currentR.isNeedVideoConference();
-        String currentNote = currentR.getNote();
-        
-        String newTimeFrom = "";
-        String newTimeTo = "";
-        
-        Integer newExpectedPersonCount = null;
-        
-        String newCustomer = "";
-        
-        Boolean newNeedVideoConference = null;
-        String newNote = ""; 
-        
-        
-        
+        System.out.println(Arrays.toString(times));
+
     }
 
     private void selectMethodByEnum(CRUDOperation operation, int id) {
@@ -582,7 +570,7 @@ public class ReservationController {
     private ReservationConflictType isGivenReservationTimeAvailable(String t1, String t2, List<Reservation> otherReservations) {
         int newInitialTime = Convertors.convertTimeStringToMinutesInt(t1);
         int newFinishTime = Convertors.convertTimeStringToMinutesInt(t2);
-        for (Reservation r : actualMeetingRoom.getSortedReservationsByDate(actualDate)) {
+        for (Reservation r : otherReservations) {
             int existingInitialTime = Convertors.convertTimeStringToMinutesInt(r.getTimeFrom());
             int existingFinishTime = Convertors.convertTimeStringToMinutesInt(r.getTimeTo());
             //Does initial time of already saved reservation belong to new Reservation?
