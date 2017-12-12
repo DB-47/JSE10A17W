@@ -12,7 +12,6 @@ import cz.unicorncollege.bt.model.Reservation;
 import cz.unicorncollege.bt.model.ReservationConflictType;
 import cz.unicorncollege.bt.utils.Choices;
 import cz.unicorncollege.bt.utils.Convertors;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang3.time.DateUtils;

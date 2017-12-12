@@ -6,13 +6,26 @@
 package cz.unicorncollege.bt.utils.fileparsing;
 
 import cz.unicorncollege.bt.model.MeetingCentre;
+import cz.unicorncollege.bt.model.MeetingRoom;
+import cz.unicorncollege.bt.model.Reservation;
+import cz.unicorncollege.bt.utils.Convertors;
 import cz.unicorncollege.controller.MeetingController;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import org.xml.sax.SAXException;
 
 /**
@@ -23,16 +36,104 @@ public class FileParserXML {
 
     public static final String DEFAULT_FILE_PATH = "importData.xml";
 
-    public static void saveData(MeetingController controll) {
-        // TODO: ulozeni dat do XML souboru, jmeno souboru muze byt natvrdo,
-        // adresar stejny jako se nachazi aplikace
-        File fileToSaveXML = null;
+    public static void saveData(Map<String, MeetingCentre> data) {
+        try {
+            OutputStream outputStream = new FileOutputStream(new File(DEFAULT_FILE_PATH));
+            XMLStreamWriter out = XMLOutputFactory.newInstance().createXMLStreamWriter(
+                    new OutputStreamWriter(outputStream, "utf-8"));
 
-        System.out.println();
-        System.out.println("**************************************************");
-        System.out.println("Data was saved into default XML file correctly.");
-        System.out.println("**************************************************");
-        System.out.println();
+            out.writeStartDocument();
+            out.writeStartElement("XA02-04");
+            out.writeStartElement("MeetingCentres");
+            for (Map.Entry<String, MeetingCentre> entry : data.entrySet()) {
+                out.writeStartElement("meetingCenter");
+                //
+                String key = entry.getKey();
+                MeetingCentre value = entry.getValue();
+                //
+                out.writeStartElement("came");
+                out.writeCharacters(value.getName());
+                out.writeEndElement();
+                //
+                out.writeStartElement("code");
+                out.writeCharacters(key);
+                out.writeEndElement();
+                //
+                out.writeStartElement("description");
+                out.writeCharacters(value.getDescription());
+                out.writeEndElement();
+                //
+                out.writeStartElement("MeetingRooms");
+                for (Map.Entry<String, MeetingRoom> innerEntry : value.getMeetingRooms().entrySet()) {
+                    //
+                    out.writeStartElement("meetingRoom");
+                    String innerKey = innerEntry.getKey();
+                    MeetingRoom innerValue = innerEntry.getValue();
+                    //
+                    out.writeStartElement("name");
+                    out.writeCharacters(innerValue.getName());
+                    out.writeEndElement();
+                    //
+                    out.writeStartElement("code");
+                    out.writeCharacters(innerKey);
+                    out.writeEndElement();
+                    //
+                    out.writeStartElement("description");
+                    out.writeCharacters(innerValue.getDescription());
+                    out.writeEndElement();
+                    //
+                    out.writeStartElement("hasVideoConference");
+                    out.writeCharacters(Convertors.convertBooleanToWord(innerValue.HasVideoConference()));
+                    out.writeEndElement();
+                    //
+                    out.writeStartElement("Reservations");
+                    for (Reservation r : innerValue.getReservations()) {
+                        out.writeStartElement("reservation");
+                        //
+                        out.writeStartElement("from");
+                        out.writeCharacters(r.getTimeFrom());
+                        out.writeEndElement();
+                        //
+                        out.writeStartElement("to");
+                        out.writeCharacters(r.getTimeTo());
+                        out.writeEndElement();
+                        //
+                        out.writeStartElement("expectedPersonsCount");
+                        out.writeCharacters(r.getExpectedPersonCount() + "");
+                        out.writeEndElement();
+                        //
+                        out.writeStartElement("videoConference");
+                        out.writeCharacters(Convertors.convertBooleanToWord(r.isNeedVideoConference()));
+                        out.writeEndElement();
+                        //
+                        out.writeStartElement("note");
+                        out.writeCharacters(r.getNote());
+                        out.writeEndElement();
+                        //
+                        out.writeEndElement();
+                    }
+                    out.writeEndElement();
+                    //
+                    out.writeEndElement();
+                }
+                out.writeEndElement();
+                //
+                out.writeEndElement();
+            }
+            out.writeEndElement();
+            out.writeEndElement();
+            out.writeEndDocument();
+
+            out.close();
+
+            System.out.println();
+            System.out.println("**************************************************");
+            System.out.println("Data was saved into default XML file correctly.");
+            System.out.println("**************************************************");
+            System.out.println();
+        } catch (XMLStreamException | UnsupportedEncodingException | FileNotFoundException ex) {
+            Logger.getLogger(FileParserXML.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -46,8 +147,6 @@ public class FileParserXML {
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser saxParser = factory.newSAXParser();
-        
-        
 
         System.out.println();
 

@@ -8,6 +8,7 @@ import cz.unicorncollege.bt.utils.fileparsing.FileParserCSV;
 import cz.unicorncollege.bt.utils.fileparsing.FileParserJSON;
 import cz.unicorncollege.bt.utils.Convertors;
 import cz.unicorncollege.bt.utils.HashGenerators;
+import cz.unicorncollege.bt.utils.fileparsing.FileParserXML;
 import java.util.Map;
 
 /**
@@ -41,6 +42,7 @@ public class MainController {
         choices.add("Exit");
         choices.add("Reservations ");
         choices.add("Export resrvations into JSON (N/A)");
+        choices.add("Exit and Save (XML, MOCK)");
         while (true) {
             switch (Choices.getChoice("Select an option: ", choices)) {
                 case 1:
@@ -90,6 +92,9 @@ public class MainController {
                     break;
                 case 7:
                     FileParserJSON.exportDataToJSON(controllR);
+                    break;
+                case 8:
+                    FileParserXML.saveData(controll.getMeetingCentres());
                     break;
             }
         }
