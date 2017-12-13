@@ -20,15 +20,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -153,20 +149,17 @@ public class FileParserXML {
         XMLStreamReader xsr = null;
         try {
             xsr = factory.createXMLStreamReader(new FileReader(DEFAULT_FILE_PATH));
-            while (xsr.hasNext()) {
-                
-                
-            }
-        } catch (FileNotFoundException | XMLStreamException e) {
-            System.out.println("(!) Error occoured during file parse: " + e.getMessage());
+      
 
+        } catch (FileNotFoundException | XMLStreamException e) {
+            System.err.println("Chyba při čtení souboru: " + e.getMessage());
         } finally {
             try {
                 if (xsr != null) {
                     xsr.close();
                 }
             } catch (XMLStreamException e) {
-                System.out.println("(!) Error during closing file: " + e.getMessage());
+                System.err.println("Chyba při uzavírání souboru: " + e.getMessage());
             }
         }
 
