@@ -36,13 +36,13 @@ public class MeetingRoom extends MeetingObject implements Serializable {
      * @param meetingCentre Meeting centre object, to which this room belongs
      *
      */
-    public MeetingRoom(int capacity, boolean hasVideoConference, MeetingCentre meetingCentre, String name, String code, String description) {
+    public MeetingRoom(int capacity, boolean hasVideoConference, MeetingCentre meetingCentre, String name, String code, String description, List<Reservation> reservations) {
         super(name, code, description);
         this.capacity = capacity;
         this.hasVideoConference = hasVideoConference;
         this.meetingCentre = meetingCentre;
         //Third part
-        this.reservations = new ArrayList<>();
+        this.reservations = reservations;
     }
 
     public int getCapacity() {

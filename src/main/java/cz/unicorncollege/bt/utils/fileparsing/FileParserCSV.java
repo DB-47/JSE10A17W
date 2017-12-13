@@ -7,6 +7,7 @@ import java.util.List;
 
 import cz.unicorncollege.bt.model.MeetingCentre;
 import cz.unicorncollege.bt.model.MeetingRoom;
+import cz.unicorncollege.bt.model.Reservation;
 import cz.unicorncollege.bt.utils.Choices;
 import cz.unicorncollege.bt.utils.Convertors;
 import java.io.FileNotFoundException;
@@ -144,7 +145,8 @@ public class FileParserCSV {
                             mcs.get(row[5]),
                             row[0],
                             row[1],
-                            row[2]
+                            row[2],
+                            new ArrayList<Reservation>()
                     ));
                 } else {
                     System.out.println("Your file contains room, that belongs to non-existing MC");

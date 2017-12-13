@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -97,6 +98,10 @@ public class FileParserXML {
                     for (Reservation r : innerValue.getReservations()) {
                         out.writeStartElement("reservation");
                         //
+                        out.writeStartElement("date");
+                        out.writeCharacters(r.getFormattedDate());
+                        out.writeEndElement();
+                        //
                         out.writeStartElement("from");
                         out.writeCharacters(r.getTimeFrom());
                         out.writeEndElement();
@@ -107,6 +112,10 @@ public class FileParserXML {
                         //
                         out.writeStartElement("expectedPersonsCount");
                         out.writeCharacters(r.getExpectedPersonCount() + "");
+                        out.writeEndElement();
+                        //
+                        out.writeStartElement("customer");
+                        out.writeCharacters(r.getCustomer() + "");
                         out.writeEndElement();
                         //
                         out.writeStartElement("videoConference");
@@ -154,9 +163,12 @@ public class FileParserXML {
 
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader xsr = null;
-        
-        Map<String, MeetingRoom> fetchedMeetingRooms = new LinkedHashMap<>();
-        List<Reservation> fetchedReservations = new LinkedList<>();        
+
+        List<MeetingCentre> fetchedMeetingCentres = new LinkedList<>();
+        //MR Code => Actual Meeting Room
+        List<MeetingRoom> fetchedMeetingRooms = new LinkedList<>();
+        //List of reservation
+        List<Reservation> fetchedReservations = new LinkedList<>();
 
         try {
             xsr = factory.createXMLStreamReader(new FileReader(DEFAULT_FILE_PATH));
@@ -174,9 +186,11 @@ public class FileParserXML {
             String MRCapacity = "";
             String MRHasVideoConference = "";
 
+            String ResDate = "";
             String ResFrom = "";
             String ResTo = "";
             String ResExpectedPersonCount = "";
+            String ResCustomerName = "";
             String ResVideoConferenceNed = "";
             String ResNote = "";
 
@@ -187,86 +201,69 @@ public class FileParserXML {
                     actualElement = xsr.getName().getLocalPart();
                     if (actualElement.equalsIgnoreCase("MEETINGCENTER")) {
                         context = "MEETINGCENTER";
-                        System.out.println("MC PARSE START");
                     } else if (actualElement.equalsIgnoreCase("MEETINGROOM")) {
                         context = "MEETINGROOM";
-                        System.out.println("MR PARSE START");
                     } else if (actualElement.equalsIgnoreCase("RESERVATION")) {
                         context = "RESERVATION";
                     }
                 } // načítáme hodnotu elementu
                 else if (xsr.getEventType() == XMLStreamConstants.CHARACTERS) {
+
                     if (actualElement.equalsIgnoreCase("NAME") && context.equalsIgnoreCase("MEETINGCENTER")) {
                         MCName = xsr.getText();
-
                     } else if (actualElement.equalsIgnoreCase("CODE") && context.equalsIgnoreCase("MEETINGCENTER")) {
                         MCCode = xsr.getText();
-
                     } else if (actualElement.equalsIgnoreCase("DESCRIPTION") && context.equalsIgnoreCase("MEETINGCENTER")) {
                         MCDescription = xsr.getText();
-
                     }
 
                     if (actualElement.equalsIgnoreCase("NAME") && context.equalsIgnoreCase("MEETINGROOM")) {
                         MRName = xsr.getText();
-                        System.out.println("--> " + MCCode);
-                        System.out.println("--> " + MCName);
-                        System.out.println("----> " + MRName);
                     } else if (actualElement.equalsIgnoreCase("CODE") && context.equalsIgnoreCase("MEETINGROOM")) {
                         MRCode = xsr.getText();
-                        System.out.println("--> " + MCCode);
-                        System.out.println("--> " + MCName);
-                        System.out.println("----> " + MRCode);
                     } else if (actualElement.equalsIgnoreCase("DESCRIPTION") && context.equalsIgnoreCase("MEETINGROOM")) {
                         MRDescription = xsr.getText();
-                        System.out.println("--> " + MCCode);
-                        System.out.println("--> " + MCName);
-                        System.out.println("----> " + MRDescription);
                     } else if (actualElement.equalsIgnoreCase("CAPACITY") && context.equalsIgnoreCase("MEETINGROOM")) {
                         MRCapacity = xsr.getText();
-                        System.out.println("--> " + MCCode);
-                        System.out.println("--> " + MCName);
-                        System.out.println("----> " + MRCapacity);
                     } else if (actualElement.equalsIgnoreCase("HASVIDEOCONFERENCE") && context.equalsIgnoreCase("MEETINGROOM")) {
                         MRHasVideoConference = xsr.getText();
-                        System.out.println("--> " + MCCode);
-                        System.out.println("--> " + MCName);
-                        System.out.println("----> " + MRHasVideoConference);
+                    }
+
+                    if (actualElement.equalsIgnoreCase("DATE") && context.equalsIgnoreCase("RESERVATION")) {
+                        ResDate = xsr.getText();
+                        System.out.println(ResDate);
+                    } else if (actualElement.equalsIgnoreCase("FROM") && context.equalsIgnoreCase("RESERVATION")) {
+                        ResFrom = xsr.getText();
+                    } else if (actualElement.equalsIgnoreCase("TO") && context.equalsIgnoreCase("RESERVATION")) {
+                        ResTo = xsr.getText();
+                    } else if (actualElement.equalsIgnoreCase("EXPECTEDPERSONSCOUNT") && context.equalsIgnoreCase("RESERVATION")) {
+                        ResExpectedPersonCount = xsr.getText();
+                    } else if (actualElement.equalsIgnoreCase("CUSTOMER") && context.equalsIgnoreCase("RESERVATION")) {
+                        ResCustomerName = xsr.getText();
+                    } else if (actualElement.equalsIgnoreCase("VIDEOCONFERENCE") && context.equalsIgnoreCase("RESERVATION")) {
+                        ResVideoConferenceNed = xsr.getText();
+                    } else if (actualElement.equalsIgnoreCase("NOTE") && context.equalsIgnoreCase("RESERVATION")) {
+                        ResNote = xsr.getText();
                     }
 
                     actualElement = "";
                     // Konec elementu  
                 } else if ((xsr.getEventType() == XMLStreamConstants.END_ELEMENT)) {
                     if (xsr.getName().getLocalPart().equalsIgnoreCase("MEETINGCENTER")) {
-                        MeetingCentre retrievedMC = new MeetingCentre(fetchedMeetingRooms, MCName, MCCode, MCDescription);
-                        allMeetingCentres.put(MCCode, retrievedMC);                        
-                        MCName = "";
-                        MCCode = "";
-                        MCDescription = "";
-                        fetchedMeetingRooms.clear();
-                        System.out.println("MC PARSE STOP");
+                        MeetingCentre mc = new MeetingCentre(new LinkedHashMap<String, MeetingRoom>(), MRName, MRCode, MRDescription);
                     } else if (xsr.getName().getLocalPart().equalsIgnoreCase("MEETINGROOM")) {
-                        
-                        MeetingRoom retrievedMr = new MeetingRoom
-                        (Integer.parseInt(MRCapacity),
-                        Convertors.convertWordToBoolean(ResNote),
-                        allMeetingCentres.get(MCCode),
-                        MRName,
-                        MRCode,
-                        MRDescription);
-                        
-                        fetchedMeetingRooms.put(MRCode, retrievedMr);
-                      
-                        MRName = "";
-                        MRCode = "";
-                        MRDescription = "";
-                        MRCapacity = "";
-                        MRHasVideoConference = "";
-                        System.out.println("MR PARSE STOP");
+                    } else if (xsr.getName().getLocalPart().equalsIgnoreCase("RESERVATION")) {
                     }
                 }
                 xsr.next();
             }
+            System.out.println();
+
+            System.out.println("**************************************************");
+            System.out.println("Data was loaded from default XML file correctly.");
+            System.out.println("**************************************************");
+
+            System.out.println();
         } catch (FileNotFoundException | XMLStreamException e) {
             System.err.println("Chyba při čtení souboru: " + e.getMessage());
         } finally {
@@ -278,16 +275,6 @@ public class FileParserXML {
                 System.err.println("Chyba při uzavírání souboru: " + e.getMessage());
             }
         }
-
-        System.out.println(allMeetingCentres);
-
-        System.out.println();
-
-        System.out.println("**************************************************");
-        System.out.println("Data was loaded from default XML file correctly.");
-        System.out.println("**************************************************");
-
-        System.out.println();
 
     }
 

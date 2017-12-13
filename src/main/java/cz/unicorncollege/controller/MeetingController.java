@@ -366,7 +366,7 @@ public class MeetingController implements Serializable {
                         System.out.println("Add room wizard stopped");
                     } else {
                         Boolean videoB = Convertors.convertWordToBoolean(video);
-                        meetingCentres.get(center).getMeetingRooms().put(code, new MeetingRoom(capacityI, videoB, meetingCentres.get(center), name, code, descr));
+                        meetingCentres.get(center).getMeetingRooms().put(code, new MeetingRoom(capacityI, videoB, meetingCentres.get(center), name, code, descr, new ArrayList<Reservation>()));
                         System.out.println("New meeting room added into " + center);
                     }
                 }

@@ -84,6 +84,11 @@ public class Convertors {
         }
         return datum;
     }
+    
+    public static String convertDateToString(Date date, String pattern){
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return sdf.format(date);
+    }
 
     /**
      * This method converts typical keyword resembling possible true false
