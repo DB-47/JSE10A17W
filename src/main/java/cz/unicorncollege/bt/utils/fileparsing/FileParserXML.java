@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -51,7 +52,7 @@ public class FileParserXML {
                 String key = entry.getKey();
                 MeetingCentre value = entry.getValue();
                 //
-                out.writeStartElement("came");
+                out.writeStartElement("name");
                 out.writeCharacters(value.getName());
                 out.writeEndElement();
                 //
@@ -80,6 +81,10 @@ public class FileParserXML {
                     //
                     out.writeStartElement("description");
                     out.writeCharacters(innerValue.getDescription());
+                    out.writeEndElement();
+                    //
+                    out.writeStartElement("capacity");
+                    out.writeCharacters(innerValue.getCapacity() + "");
                     out.writeEndElement();
                     //
                     out.writeStartElement("hasVideoConference");
@@ -141,16 +146,119 @@ public class FileParserXML {
      * Method to load the data from file.
      *
      */
-    public static void loadDataFromFile() {
+    public static Map<String, MeetingCentre> loadDataFromFile() {
         // TODO: nacist data z XML souboru
         Map<String, MeetingCentre> allMeetingCentres = new LinkedHashMap<>();
 
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader xsr = null;
+
         try {
             xsr = factory.createXMLStreamReader(new FileReader(DEFAULT_FILE_PATH));
-      
 
+            String actualElement = "";
+            String context = "";
+
+            String MCName = "";
+            String MCCode = "";
+            String MCDescription = "";
+
+            String MRName = "";
+            String MRCode = "";
+            String MRDescription = "";
+            String MRCapacity = "";
+            String MRHasVideoConference = "";
+
+            String ResFrom = "";
+            String ResTo = "";
+            String ResExpectedPersonCount = "";
+            String ResVideoConferenceNed = "";
+            String ResNote = "";
+
+            while (xsr.hasNext()) {
+
+                // Start elementu
+                if (xsr.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                    actualElement = xsr.getName().getLocalPart();
+                    if (actualElement.equalsIgnoreCase("MEETINGCENTER")) {
+                        context = "MEETINGCENTER";
+                        System.out.println("MC PARSE START");
+                    } else if (actualElement.equalsIgnoreCase("MEETINGROOM")) {
+                        context = "MEETINGROOM";
+                        System.out.println("MR PARSE START");
+                    } else if (actualElement.equalsIgnoreCase("RESERVATION")) {
+                        context = "RESERVATION";
+                    }
+                } // načítáme hodnotu elementu
+                else if (xsr.getEventType() == XMLStreamConstants.CHARACTERS) {
+                    if (actualElement.equalsIgnoreCase("NAME") && context.equalsIgnoreCase("MEETINGCENTER")) {
+                        MCName = xsr.getText();
+
+                    } else if (actualElement.equalsIgnoreCase("CODE") && context.equalsIgnoreCase("MEETINGCENTER")) {
+                        MCCode = xsr.getText();
+
+                    } else if (actualElement.equalsIgnoreCase("DESCRIPTION") && context.equalsIgnoreCase("MEETINGCENTER")) {
+                        MCDescription = xsr.getText();
+
+                    }
+
+                    if (actualElement.equalsIgnoreCase("NAME") && context.equalsIgnoreCase("MEETINGROOM")) {
+                        MRName = xsr.getText();
+                        System.out.println("--> " + MCCode);
+                        System.out.println("--> " + MCName);
+                        System.out.println("----> " + MRName);
+                    } else if (actualElement.equalsIgnoreCase("CODE") && context.equalsIgnoreCase("MEETINGROOM")) {
+                        MRCode = xsr.getText();
+                        System.out.println("--> " + MCCode);
+                        System.out.println("--> " + MCName);
+                        System.out.println("----> " + MRCode);
+                    } else if (actualElement.equalsIgnoreCase("DESCRIPTION") && context.equalsIgnoreCase("MEETINGROOM")) {
+                        MRDescription = xsr.getText();
+                        System.out.println("--> " + MCCode);
+                        System.out.println("--> " + MCName);
+                        System.out.println("----> " + MRDescription);
+                    } else if (actualElement.equalsIgnoreCase("CAPACITY") && context.equalsIgnoreCase("MEETINGROOM")) {
+                        MRCapacity = xsr.getText();
+                        System.out.println("--> " + MCCode);
+                        System.out.println("--> " + MCName);
+                        System.out.println("----> " + MRCapacity);
+                    } else if (actualElement.equalsIgnoreCase("HASVIDEOCONFERENCE") && context.equalsIgnoreCase("MEETINGROOM")) {
+                        MRHasVideoConference = xsr.getText();
+                        System.out.println("--> " + MCCode);
+                        System.out.println("--> " + MCName);
+                        System.out.println("----> " + MRHasVideoConference);
+                    }
+
+                    actualElement = "";
+                    // Konec elementu  
+                } else if ((xsr.getEventType() == XMLStreamConstants.END_ELEMENT)) {
+                    if (xsr.getName().getLocalPart().equalsIgnoreCase("MEETINGCENTER")) {
+                        MeetingCentre retrievedMC = new MeetingCentre(new LinkedHashMap<String, MeetingRoom>(), MCName, MCCode, MCDescription);
+                        allMeetingCentres.put(MCCode, retrievedMC);
+                        MCName = "";
+                        MCCode = "";
+                        MCDescription = "";
+                        System.out.println("MC PARSE STOP");
+                    } else if (xsr.getName().getLocalPart().equalsIgnoreCase("MEETINGROOM")) {
+                        
+                        MeetingRoom retrievedMr = new MeetingRoom
+                        (Integer.parseInt(MRCapacity),
+                        Convertors.convertWordToBoolean(MRHasVideoConference),
+                        allMeetingCentres.get(MCCode),
+                        MRName,
+                        MRCode,
+                        MRDescription);
+                        
+                        MRName = "";
+                        MRCode = "";
+                        MRDescription = "";
+                        MRCapacity = "";
+                        MRHasVideoConference = "";
+                        System.out.println("MR PARSE STOP");
+                    }
+                }
+                xsr.next();
+            }
         } catch (FileNotFoundException | XMLStreamException e) {
             System.err.println("Chyba při čtení souboru: " + e.getMessage());
         } finally {
@@ -163,6 +271,8 @@ public class FileParserXML {
             }
         }
 
+        System.out.println(allMeetingCentres);
+
         System.out.println();
 
         System.out.println("**************************************************");
@@ -170,7 +280,8 @@ public class FileParserXML {
         System.out.println("**************************************************");
 
         System.out.println();
-
+        
+        return allMeetingCentres;      
     }
 
     public static Map<String, MeetingCentre> importData() {

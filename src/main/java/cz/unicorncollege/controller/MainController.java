@@ -43,6 +43,7 @@ public class MainController {
         choices.add("Reservations ");
         choices.add("Export resrvations into JSON (N/A)");
         choices.add("Exit and Save (XML, MOCK)");
+        choices.add("Show data from XML");
         while (true) {
             switch (Choices.getChoice("Select an option: ", choices)) {
                 case 1:
@@ -95,6 +96,9 @@ public class MainController {
                     break;
                 case 8:
                     FileParserXML.saveData(controll.getMeetingCentres());
+                    break;
+                case 9:
+                    FileParserXML.loadDataFromFile();
                     break;
             }
         }
