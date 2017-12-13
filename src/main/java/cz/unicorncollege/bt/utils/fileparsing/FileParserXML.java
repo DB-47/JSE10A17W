@@ -17,6 +17,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -146,12 +148,15 @@ public class FileParserXML {
      * Method to load the data from file.
      *
      */
-    public static Map<String, MeetingCentre> loadDataFromFile() {
+    public static void loadDataFromFile() {
         // TODO: nacist data z XML souboru
         Map<String, MeetingCentre> allMeetingCentres = new LinkedHashMap<>();
 
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader xsr = null;
+        
+        Map<String, MeetingRoom> fetchedMeetingRooms = new LinkedHashMap<>();
+        List<Reservation> fetchedReservations = new LinkedList<>();        
 
         try {
             xsr = factory.createXMLStreamReader(new FileReader(DEFAULT_FILE_PATH));
@@ -233,22 +238,25 @@ public class FileParserXML {
                     // Konec elementu  
                 } else if ((xsr.getEventType() == XMLStreamConstants.END_ELEMENT)) {
                     if (xsr.getName().getLocalPart().equalsIgnoreCase("MEETINGCENTER")) {
-                        MeetingCentre retrievedMC = new MeetingCentre(new LinkedHashMap<String, MeetingRoom>(), MCName, MCCode, MCDescription);
-                        allMeetingCentres.put(MCCode, retrievedMC);
+                        MeetingCentre retrievedMC = new MeetingCentre(fetchedMeetingRooms, MCName, MCCode, MCDescription);
+                        allMeetingCentres.put(MCCode, retrievedMC);                        
                         MCName = "";
                         MCCode = "";
                         MCDescription = "";
+                        fetchedMeetingRooms.clear();
                         System.out.println("MC PARSE STOP");
                     } else if (xsr.getName().getLocalPart().equalsIgnoreCase("MEETINGROOM")) {
                         
                         MeetingRoom retrievedMr = new MeetingRoom
                         (Integer.parseInt(MRCapacity),
-                        Convertors.convertWordToBoolean(MRHasVideoConference),
+                        Convertors.convertWordToBoolean(ResNote),
                         allMeetingCentres.get(MCCode),
                         MRName,
                         MRCode,
                         MRDescription);
                         
+                        fetchedMeetingRooms.put(MRCode, retrievedMr);
+                      
                         MRName = "";
                         MRCode = "";
                         MRDescription = "";
@@ -280,8 +288,7 @@ public class FileParserXML {
         System.out.println("**************************************************");
 
         System.out.println();
-        
-        return allMeetingCentres;      
+
     }
 
     public static Map<String, MeetingCentre> importData() {

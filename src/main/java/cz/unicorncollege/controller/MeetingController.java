@@ -10,6 +10,7 @@ import cz.unicorncollege.bt.utils.Choices;
 import cz.unicorncollege.bt.utils.fileparsing.FileParserCSV;
 import cz.unicorncollege.bt.utils.Convertors;
 import cz.unicorncollege.bt.utils.HashGenerators;
+import cz.unicorncollege.bt.utils.fileparsing.FileParserXML;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
