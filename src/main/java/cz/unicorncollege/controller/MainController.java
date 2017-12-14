@@ -78,6 +78,7 @@ public class MainController {
                     }
                     break;
                 case 6:
+                    FileParserJSON.exportDataToJSON(controll.getMeetingCentres());
                     break;
                 case 7:
                     System.out.println(controll.getInitialMD5());
