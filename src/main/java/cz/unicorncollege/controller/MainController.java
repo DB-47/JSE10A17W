@@ -37,11 +37,13 @@ public class MainController {
         List<String> choices = new ArrayList<>();
         choices.add("List all Meeting Centres");
         choices.add("Add new Meeting Centre");
-        choices.add("Import Data (XML)");
-        choices.add("Exit and Save (XML)");
+        choices.add("Reservation menu");
+        choices.add("Import Data from CSV");
+        choices.add("Import Data from XML");
+        choices.add("Export reservation into JSON file (WIP)");
+        choices.add("Exit and Save");
         choices.add("Exit");
-        choices.add("Reservations ");
-        choices.add("Export resrvations into JSON (WIP)");
+
         while (true) {
             switch (Choices.getChoice("Select an option: ", choices)) {
                 case 1:
@@ -51,6 +53,9 @@ public class MainController {
                     controll.addMeetingCentre();
                     break;
                 case 3:
+                    controllR.showReservationMenu();
+                    break;
+                case 4:
                     Map<String, MeetingCentre> temp = FileParserCSV.importData();
                     if (temp.isEmpty()) {
                         System.out.println("**************************************************");
@@ -61,10 +66,25 @@ public class MainController {
                         controll.listAllMeetingCentres();
                     }
                     break;
-                case 4:
+                case 5:
+                    Map<String, MeetingCentre> temp2 = FileParserXML.importData();
+                    if (temp2.isEmpty()) {
+                        System.out.println("**************************************************");
+                        System.out.println("-> No in app data were affected...");
+                        System.out.println("**************************************************");
+                    } else {
+                        controll.setMeetingCentres(temp2);
+                        controll.listAllMeetingCentres();
+                    }
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    System.out.println(controll.getInitialMD5());
+                    System.out.println(HashGenerators.getMD5(controll.provideDataForHashGenerator()));
                     FileParserXML.saveData(controll.getMeetingCentres());
                     return;
-                case 5:
+                case 8:
                     String initialMD5 = controll.getInitialMD5();
                     String finalMD5 = HashGenerators.getMD5(controll.provideDataForHashGenerator());
                     System.out.println(initialMD5);
@@ -86,14 +106,8 @@ public class MainController {
                             break;
                         }
                     }
-                case 6:
-                    controllR.showReservationMenu();
-                    break;
-                case 7:
-                    FileParserJSON.exportDataToJSON(controllR);
-                    break;
             }
         }
     }
-    
+
 }

@@ -5,9 +5,10 @@
  */
 package cz.unicorncollege.bt.utils.fileparsing;
 
+import cz.unicorncollege.bt.model.MeetingCentre;
 import cz.unicorncollege.bt.utils.Choices;
-import cz.unicorncollege.controller.ReservationController;
 import java.io.File;
+import java.util.Map;
 import javax.json.JsonObject;
 
 /**
@@ -19,14 +20,14 @@ public class FileParserJSON {
     	/**
 	 * Method to export data to JSON file
 	 * 
-	 * @param controllReservation
-	 *            Object of reservation controller to get all reservation and
-	 *            other data if needed
+	 * @param data 
+	 * Map containing all meeting centers, from whose will be extracted
+         * reservations and all necessary information
 	 */
-	public static void exportDataToJSON(ReservationController controllReservation) {
+	public static void exportDataToJSON(Map<String, MeetingCentre> data) {
 		// TODO: ulozeni dat do souboru ve formatu JSON
 
-		String locationFilter = Choices.getInput("Enter name of the file for export: ");
+		String locationFilter = Choices.getInput("Enter name of the file for export (.json ending will be added: ");
 
 		File exportDataFile = null;
 		JsonObject json = null;

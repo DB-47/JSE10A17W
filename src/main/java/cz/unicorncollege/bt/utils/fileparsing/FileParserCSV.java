@@ -32,30 +32,31 @@ public class FileParserCSV {
 
         try {
             System.out.println("**************************************************");
-            System.out.println("-> Import will lead to loss of temporary in app data");
+            System.out.println("-> (i) Import will lead to loss of temporary in app data");
+            System.out.println("-> (i) CSV import does not support reservations");
             System.out.println("-> Proceed with caution...");
-            System.out.println("-> You can type !cancel in case you triggered this accidentally");
+            System.out.println("-> (i) You can type !cancel in case you triggered this accidentally");
             System.out.println("**************************************************");
 
             String locationFilter = Choices.getInput("Enter path of imported file: ");
             if (locationFilter.equalsIgnoreCase(KEYWORD_CANCEL)) {
                 System.out.println();
                 System.out.println("**************************************************");
-                System.out.println("-> You canceled successfully data import");
+                System.out.println("-> (i) You canceled successfully data import");
                 System.out.println("**************************************************");
                 System.out.println();
             } else {
                 allMeetingCentres = writeRawDataToWorkData(nactiCSVdoKolekce(locationFilter, ODDELOVAC));
                 System.out.println();
                 System.out.println("**************************************************");
-                System.out.println("-> Data was imported. " + allMeetingCentres.size() + " objects of MeetingCentres was loaded");
+                System.out.println("-> (i) Data was imported. " + allMeetingCentres.size() + " objects of MeetingCentres was loaded");
                 System.out.println("**************************************************");
                 System.out.println();
             }
 
         } catch (IOException ex) {
             System.out.println("**************************************************");
-            System.out.println("-> Attention! Invalid filepath given, repeat choice No. 3");
+            System.out.println("-> (i) Attention! Invalid filepath given, repeat choice No. 3");
             System.out.println("**************************************************");
         }
 

@@ -8,11 +8,13 @@ package cz.unicorncollege.bt.utils.fileparsing;
 import cz.unicorncollege.bt.model.MeetingCentre;
 import cz.unicorncollege.bt.model.MeetingRoom;
 import cz.unicorncollege.bt.model.Reservation;
+import cz.unicorncollege.bt.utils.Choices;
 import cz.unicorncollege.bt.utils.Convertors;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -143,20 +145,25 @@ public class FileParserXML {
 
             System.out.println();
             System.out.println("**************************************************");
-            System.out.println("Data was saved into default XML file correctly.");
+            System.out.println("-> Data was saved into default XML file correctly.");
             System.out.println("**************************************************");
             System.out.println();
         } catch (XMLStreamException | FileNotFoundException ex) {
-            Logger.getLogger(FileParserXML.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println();
+            System.out.println("**************************************************");
+            System.out.println("-> (!) Problems occoured during saving XML...");
+            System.out.println("-> Error details " + ex.getMessage());
+            System.out.println("**************************************************");
+            System.out.println();
         }
     }
 
     /**
      * Method to load the data from file.
      *
-     * @return 
+     * @return
      */
-    public static Map<String, MeetingCentre> loadDataFromFile() {
+    public static Map<String, MeetingCentre> loadDataFromFile(String fileName) {
         // TODO: nacist data z XML souboru
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader xsr = null;
@@ -166,7 +173,7 @@ public class FileParserXML {
         List<Reservation> fetchedReservations = new ArrayList<>();
 
         try {
-            xsr = factory.createXMLStreamReader(new FileReader(DEFAULT_FILE_PATH));
+            xsr = factory.createXMLStreamReader(new FileReader(fileName));
 
             String actualElement = "";
             String context = "";
@@ -267,27 +274,59 @@ public class FileParserXML {
                 xsr.next();
             }
             System.out.println("**************************************************");
-            System.out.println("Data was loaded from default XML file correctly.");
+            System.out.println("-> Data was loaded from XML file correctly.");
             System.out.println("**************************************************");
             System.out.println();
         } catch (FileNotFoundException | XMLStreamException e) {
-            System.err.println("(!) File read error: " + e.getMessage());
+            System.out.println("**************************************************");
+            System.out.println("-> (!) Default file missing or is corrupted...");
+            System.out.println("-> Error details " + e.getMessage());
+            System.out.println("**************************************************");
         } finally {
             try {
                 if (xsr != null) {
                     xsr.close();
                 }
             } catch (XMLStreamException e) {
-                System.err.println("(!) File closing error: " + e.getMessage());
+                System.out.println("**************************************************");
+                System.out.println("-> (!) Error occoured during file closing...");
+                System.out.println("-> Error details " + e.getMessage());
+                System.out.println("**************************************************");
             }
         }
-
         return allMeetingCentres;
+    }
+    
+    public static Map<String, MeetingCentre> loadDataFromFile() {
+       return loadDataFromFile(DEFAULT_FILE_PATH);
     }
 
     public static Map<String, MeetingCentre> importData() {
         Map<String, MeetingCentre> allMeetingCentres = new LinkedHashMap<>();
-        return null;
+
+        System.out.println("**************************************************");
+        System.out.println("-> (i) Import will lead to loss of temporary in app data");
+        System.out.println("-> (i) XML import supports whole data structure of app");
+        System.out.println("-> Proceed with caution...");
+        System.out.println("-> (i) You can type !cancel in case you triggered this accidentally");
+        System.out.println("**************************************************");
+        String locationFilter = Choices.getInput("Enter path of imported file: ");
+        if (locationFilter.equalsIgnoreCase("!cancel")) {
+            System.out.println();
+            System.out.println("**************************************************");
+            System.out.println("-> (i) You canceled successfully data import");
+            System.out.println("**************************************************");
+            System.out.println();
+        } else {
+            allMeetingCentres = loadDataFromFile(locationFilter);
+            System.out.println();
+            System.out.println("**************************************************");
+            System.out.println("-> (i) Data was imported. " + allMeetingCentres.size() + " objects of MeetingCentres was loaded");
+            System.out.println("**************************************************");
+            System.out.println();
+        }
+
+        return allMeetingCentres;
     }
 
 }
