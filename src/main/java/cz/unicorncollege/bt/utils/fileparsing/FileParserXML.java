@@ -14,15 +14,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -164,7 +161,6 @@ public class FileParserXML {
      * @return
      */
     public static Map<String, MeetingCentre> loadDataFromFile(String fileName) {
-        // TODO: nacist data z XML souboru
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader xsr = null;
 

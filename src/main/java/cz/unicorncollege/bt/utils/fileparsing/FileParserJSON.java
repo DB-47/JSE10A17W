@@ -10,6 +10,8 @@ import cz.unicorncollege.bt.utils.Choices;
 import java.io.File;
 import java.util.Map;
 import javax.json.JsonObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -27,10 +29,11 @@ public class FileParserJSON {
 	public static void exportDataToJSON(Map<String, MeetingCentre> data) {
 		// TODO: ulozeni dat do souboru ve formatu JSON
 
-		String locationFilter = Choices.getInput("Enter name of the file for export (.json ending will be added: ");
+		String locationFilter = Choices.getInput("Enter name of the file for export (.json ending will be added) : ");
 
 		File exportDataFile = null;
-		JsonObject json = null;
+                
+               // json.put("schema", "PLUS4U.EBC.MCS.MeetingRoom_Schedule_1.0");
 
 		System.out.println();
 
