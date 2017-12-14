@@ -5,9 +5,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * This class represents meeting room. Meeting room is a object that belongs to
@@ -123,6 +127,35 @@ public class MeetingRoom extends MeetingObject implements Serializable {
     }
 
     /**
+     * Method provides all reservations of such meeting room structured
+     * chronologically by reservation date and initial time
+     *
+     * @return Map containing keys as dates and reservation lists, with all
+     * reservations for such date. Both dates and times are sorted
+     *
+     */
+    public Map<Date, List<Reservation>> retrieveReservationSortedByDateAndByTime() {
+        Map<Date, List<Reservation>> allSortedReservations = new LinkedHashMap<>();
+        //Let's get first all dates of reservations
+        //Sort them
+        //Get for each date it's reservations
+        Set<Date> sortedDates = new TreeSet<>();
+        for (Reservation r : reservations) {
+            sortedDates.add(r.getDate());
+        }
+        for (Date sortedDate : sortedDates) {
+            System.out.println("----> " + Convertors.convertDateToString(sortedDate));
+            allSortedReservations.put(sortedDate, new ArrayList<Reservation>());
+            List<Reservation> thisDateReservations = getSortedReservationsByDate(sortedDate);
+            for (Reservation thisDateReservation : thisDateReservations) {
+                allSortedReservations.get(sortedDate).add(thisDateReservation);
+                System.out.println("--> " + thisDateReservation.toString());
+            }
+        }
+        return allSortedReservations;
+    }
+
+    /**
      * This is modified getter, which will retrieve all reservation within given
      * date. This getter also return reservation with its index in main List
      * with reservation, so external command can easily delete such reservation
@@ -143,7 +176,6 @@ public class MeetingRoom extends MeetingObject implements Serializable {
         }
         return collectedReservations;
     }
-
 
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;

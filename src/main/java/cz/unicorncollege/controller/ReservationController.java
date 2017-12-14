@@ -380,6 +380,7 @@ public class ReservationController {
             List<String> choices = new ArrayList<>();
 
             int choiceIndex = 0;
+            System.out.println("Listed reservations for: " + getActualData());
             for (Map.Entry<Integer, Reservation> entry : availableReservations.entrySet()) {
                 Integer key = entry.getKey();
                 Reservation value = entry.getValue();
@@ -550,6 +551,7 @@ public class ReservationController {
                     break;
                 case 8:
                     return;
+
             }
         }
     }

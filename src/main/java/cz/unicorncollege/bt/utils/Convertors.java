@@ -89,6 +89,10 @@ public class Convertors {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return sdf.format(date);
     }
+    
+    public static String convertDateToString(Date date){
+        return convertDateToString(date, "dd.MM.yyyy");
+    }
 
     /**
      * This method converts typical keyword resembling possible true false

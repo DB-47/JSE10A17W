@@ -9,7 +9,6 @@ import cz.unicorncollege.bt.model.MeetingCentre;
 import cz.unicorncollege.bt.utils.Choices;
 import java.io.File;
 import java.util.Map;
-import javax.json.JsonObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
