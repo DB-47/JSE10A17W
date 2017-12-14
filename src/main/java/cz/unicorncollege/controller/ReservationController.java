@@ -168,7 +168,7 @@ public class ReservationController {
                             Reservation r = new Reservation(actualMeetingRoom, actualDate, times[0], times[1], expectedPersonCount, customer, videoConf, note);
                             actualMeetingRoom.getReservations().add(r);
                             System.out.println("Reservation successfully added");
-                            System.out.println("");
+                            System.out.println("");                           
                         }
                     }
                 }

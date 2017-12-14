@@ -15,8 +15,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -156,6 +154,7 @@ public class FileParserXML {
     /**
      * Method to load the data from file.
      *
+     * @return 
      */
     public static Map<String, MeetingCentre> loadDataFromFile() {
         // TODO: nacist data z XML souboru
@@ -202,7 +201,7 @@ public class FileParserXML {
                     } else if (actualElement.equalsIgnoreCase("RESERVATION")) {
                         context = "RESERVATION";
                     }
-                } // naƒç√≠t√°me hodnotu elementu
+                } // naËÌt·me hodnotu elementu
                 else if (xsr.getEventType() == XMLStreamConstants.CHARACTERS) {
 
                     if (actualElement.equalsIgnoreCase("NAME") && context.equalsIgnoreCase("MEETINGCENTER")) {
@@ -272,14 +271,14 @@ public class FileParserXML {
             System.out.println("**************************************************");
             System.out.println();
         } catch (FileNotFoundException | XMLStreamException e) {
-            System.err.println("Chyba p≈ôi ƒçten√≠ souboru: " + e.getMessage());
+            System.err.println("Chyba p¯i ËtenÌ souboru: " + e.getMessage());
         } finally {
             try {
                 if (xsr != null) {
                     xsr.close();
                 }
             } catch (XMLStreamException e) {
-                System.err.println("Chyba p≈ôi uzav√≠r√°n√≠ souboru: " + e.getMessage());
+                System.err.println("Chyba p¯i uzavÌr·nÌ souboru: " + e.getMessage());
             }
         }
 
