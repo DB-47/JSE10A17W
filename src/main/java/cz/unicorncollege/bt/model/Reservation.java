@@ -5,6 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Reservation implements Serializable{
+
+    @Override
+    public String toString() {
+        return "Reservation{" + "meetingRoom=" + meetingRoom + ", date=" + date + ", timeFrom=" + timeFrom + ", timeTo=" + timeTo + ", expectedPersonCount=" + expectedPersonCount + ", customer=" + customer + ", needVideoConference=" + needVideoConference + ", note=" + note + '}';
+    }
 	private MeetingRoom meetingRoom;
 	private Date date;
 	private String timeFrom;

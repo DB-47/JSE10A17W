@@ -31,7 +31,7 @@ public class MeetingController implements Serializable {
      */
     public void init() {
 
-        meetingCentres = FileParserCSV.loadDataFromFile();
+        meetingCentres = FileParserXML.loadDataFromFile();
         //We create MD5 from central Map
         //We can surely tell, if someone altered this map or not
         //This can be used for warning user when exiting without save after modifying data
@@ -636,6 +636,7 @@ public class MeetingController implements Serializable {
             String mcCode = entry.getValue().getCode();
             String mcDescription = entry.getValue().getDescription();
             serializeFriendlyData.add(mcName + mcCode + mcDescription);
+            //System.out.println(mcName + ";;" + mcCode + ";;" + mcDescription);
         }
         // MEETING ROOMS
         for (Map.Entry<String, MeetingCentre> entry : meetingCentres.entrySet()) {
@@ -648,6 +649,7 @@ public class MeetingController implements Serializable {
                 String mrHasVideoConf = Convertors.convertBooleanToWord(innerEntry.getValue().HasVideoConference());
                 String mrMc = innerEntry.getValue().getMeetingCentre().getCode();
                 serializeFriendlyData.add(mrName + mrCode + mrDescription + mrCapacity + mrHasVideoConf + mrMc);
+              //System.out.println(mrName + ";;" + mrCode + ";;" + mrDescription + ";;" + mrCapacity + ";;" + mrHasVideoConf + ";;" + mrMc);
             }
         }
         // RESERVATIONS

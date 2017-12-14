@@ -44,7 +44,7 @@ public class FileParserXML {
         try {
             outputStream = new FileOutputStream(new File(DEFAULT_FILE_PATH));
             out = XMLOutputFactory.newInstance().createXMLStreamWriter(
-                    new OutputStreamWriter(outputStream, "utf-8"));
+                    new OutputStreamWriter(outputStream));
 
             out.writeStartDocument();
             out.writeStartElement("XA02-04");
@@ -148,7 +148,7 @@ public class FileParserXML {
             System.out.println("Data was saved into default XML file correctly.");
             System.out.println("**************************************************");
             System.out.println();
-        } catch (XMLStreamException | UnsupportedEncodingException | FileNotFoundException ex) {
+        } catch (XMLStreamException | FileNotFoundException ex) {
             Logger.getLogger(FileParserXML.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -157,17 +157,13 @@ public class FileParserXML {
      * Method to load the data from file.
      *
      */
-    public static void loadDataFromFile() {
+    public static Map<String, MeetingCentre> loadDataFromFile() {
         // TODO: nacist data z XML souboru
-        Map<String, MeetingCentre> allMeetingCentres = new LinkedHashMap<>();
-
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader xsr = null;
 
-        List<MeetingCentre> fetchedMeetingCentres = new LinkedList<>();
-        //MR Code => Actual Meeting Room
+        Map<String, MeetingCentre> allMeetingCentres = new LinkedHashMap<>();
         List<MeetingRoom> fetchedMeetingRooms = new LinkedList<>();
-        //List of reservation
         List<Reservation> fetchedReservations = new LinkedList<>();
 
         try {
@@ -231,7 +227,6 @@ public class FileParserXML {
 
                     if (actualElement.equalsIgnoreCase("DATE") && context.equalsIgnoreCase("RESERVATION")) {
                         ResDate = xsr.getText();
-                        System.out.println(ResDate);
                     } else if (actualElement.equalsIgnoreCase("FROM") && context.equalsIgnoreCase("RESERVATION")) {
                         ResFrom = xsr.getText();
                     } else if (actualElement.equalsIgnoreCase("TO") && context.equalsIgnoreCase("RESERVATION")) {
@@ -250,19 +245,31 @@ public class FileParserXML {
                     // Konec elementu  
                 } else if ((xsr.getEventType() == XMLStreamConstants.END_ELEMENT)) {
                     if (xsr.getName().getLocalPart().equalsIgnoreCase("MEETINGCENTER")) {
-                        MeetingCentre mc = new MeetingCentre(new LinkedHashMap<String, MeetingRoom>(), MRName, MRCode, MRDescription);
+                        MeetingCentre mc = new MeetingCentre(new LinkedHashMap<String, MeetingRoom>(), MCName, MCCode, MCDescription);
+                        for (MeetingRoom mr : fetchedMeetingRooms) {
+                            mr.setMeetingCentre(mc);
+                            mc.getMeetingRooms().put(mr.getCode(), mr);
+                        }
+                        allMeetingCentres.put(MCCode, mc);
+                        fetchedMeetingRooms.clear();
                     } else if (xsr.getName().getLocalPart().equalsIgnoreCase("MEETINGROOM")) {
+                        MeetingRoom mr = new MeetingRoom(Integer.parseInt(MRCapacity), Convertors.convertWordToBoolean(MRHasVideoConference), null, MRName, MRCode, MRDescription, fetchedReservations);
+                        for (Reservation r : mr.getReservations()) {
+                            r.setMeetingRoom(mr);
+                            r.toString();
+                        }
+                        fetchedMeetingRooms.add(mr);
+                        fetchedReservations.clear();
                     } else if (xsr.getName().getLocalPart().equalsIgnoreCase("RESERVATION")) {
+                        Reservation r = new Reservation(null, Convertors.convertStringToDate(ResDate), ResFrom, ResTo, Integer.parseInt(ResExpectedPersonCount), ResCustomerName, Convertors.convertWordToBoolean(ResVideoConferenceNed), ResNote);
+                        fetchedReservations.add(r);
                     }
                 }
                 xsr.next();
             }
-            System.out.println();
-
             System.out.println("**************************************************");
             System.out.println("Data was loaded from default XML file correctly.");
             System.out.println("**************************************************");
-
             System.out.println();
         } catch (FileNotFoundException | XMLStreamException e) {
             System.err.println("Chyba při čtení souboru: " + e.getMessage());
@@ -276,10 +283,10 @@ public class FileParserXML {
             }
         }
 
+        return allMeetingCentres;
     }
 
     public static Map<String, MeetingCentre> importData() {
-
         Map<String, MeetingCentre> allMeetingCentres = new LinkedHashMap<>();
         return null;
     }

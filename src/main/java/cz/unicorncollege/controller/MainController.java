@@ -37,13 +37,11 @@ public class MainController {
         List<String> choices = new ArrayList<>();
         choices.add("List all Meeting Centres");
         choices.add("Add new Meeting Centre");
-        choices.add("Import Data (CSV)");
-        choices.add("Exit and Save (CSV)");
+        choices.add("Import Data (XML)");
+        choices.add("Exit and Save (XML)");
         choices.add("Exit");
         choices.add("Reservations ");
-        choices.add("Export resrvations into JSON (N/A)");
-        choices.add("Exit and Save (XML, MOCK)");
-        choices.add("Show data from XML");
+        choices.add("Export resrvations into JSON (WIP)");
         while (true) {
             switch (Choices.getChoice("Select an option: ", choices)) {
                 case 1:
@@ -64,7 +62,7 @@ public class MainController {
                     }
                     break;
                 case 4:
-                    FileParserCSV.saveData(controll.provideDataForSave());
+                    FileParserXML.saveData(controll.getMeetingCentres());
                     return;
                 case 5:
                     String initialMD5 = controll.getInitialMD5();
@@ -93,12 +91,6 @@ public class MainController {
                     break;
                 case 7:
                     FileParserJSON.exportDataToJSON(controllR);
-                    break;
-                case 8:
-                    FileParserXML.saveData(controll.getMeetingCentres());
-                    break;
-                case 9:
-                    FileParserXML.loadDataFromFile();
                     break;
             }
         }
