@@ -15,8 +15,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -162,8 +162,8 @@ public class FileParserXML {
         XMLStreamReader xsr = null;
 
         Map<String, MeetingCentre> allMeetingCentres = new LinkedHashMap<>();
-        List<MeetingRoom> fetchedMeetingRooms = new LinkedList<>();
-        List<Reservation> fetchedReservations = new LinkedList<>();
+        List<MeetingRoom> fetchedMeetingRooms = new ArrayList<>();
+        List<Reservation> fetchedReservations = new ArrayList<>();
 
         try {
             xsr = factory.createXMLStreamReader(new FileReader(DEFAULT_FILE_PATH));
@@ -201,7 +201,7 @@ public class FileParserXML {
                     } else if (actualElement.equalsIgnoreCase("RESERVATION")) {
                         context = "RESERVATION";
                     }
-                } // naËÌt·me hodnotu elementu
+                } // Naƒçteme hodnotu elementu
                 else if (xsr.getEventType() == XMLStreamConstants.CHARACTERS) {
 
                     if (actualElement.equalsIgnoreCase("NAME") && context.equalsIgnoreCase("MEETINGCENTER")) {
@@ -271,14 +271,14 @@ public class FileParserXML {
             System.out.println("**************************************************");
             System.out.println();
         } catch (FileNotFoundException | XMLStreamException e) {
-            System.err.println("Chyba p¯i ËtenÌ souboru: " + e.getMessage());
+            System.err.println("(!) File read error: " + e.getMessage());
         } finally {
             try {
                 if (xsr != null) {
                     xsr.close();
                 }
             } catch (XMLStreamException e) {
-                System.err.println("Chyba p¯i uzavÌr·nÌ souboru: " + e.getMessage());
+                System.err.println("(!) File closing error: " + e.getMessage());
             }
         }
 

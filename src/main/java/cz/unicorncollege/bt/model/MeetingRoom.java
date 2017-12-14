@@ -42,7 +42,7 @@ public class MeetingRoom extends MeetingObject implements Serializable {
         this.hasVideoConference = hasVideoConference;
         this.meetingCentre = meetingCentre;
         //Third part
-        this.reservations = reservations;
+        this.reservations = new ArrayList<>(reservations);
     }
 
     public int getCapacity() {
@@ -143,6 +143,7 @@ public class MeetingRoom extends MeetingObject implements Serializable {
         }
         return collectedReservations;
     }
+
 
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
