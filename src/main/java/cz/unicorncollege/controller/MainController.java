@@ -86,15 +86,11 @@ public class MainController {
                     FileParserJSON.exportDataToJSON(controll.getMeetingCentres());
                     break;
                 case 7:
-                    System.out.println(controll.getInitialMD5());
-                    System.out.println(HashGenerators.getMD5(controll.provideDataForHashGenerator()));
                     FileParserXML.saveData(controll.getMeetingCentres());
                     return;
                 case 8:
                     String initialMD5 = controll.getInitialMD5();
                     String finalMD5 = HashGenerators.getMD5(controll.provideDataForHashGenerator());
-                    System.out.println(initialMD5);
-                    System.out.println(finalMD5);
                     if (initialMD5.equals(finalMD5)) {
                         System.out.println("**************************************************");
                         System.out.println("-> Exited correctly without changes...");
