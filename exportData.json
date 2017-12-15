@@ -5,10 +5,10 @@
             "reservations": {
                 "15.12.2017": [{
                         "note": "Jin� m�stnost",
+                        "expectedPersonCount": 6,
                         "from": "06:30",
-                        "to": "08:00",
-                        "expectedPersonsCount": 6,
-                        "customer": "NO"
+                        "to": "06:30",
+                        "videoConference": false
                     }]
             },
             "meetingCentre": "EBC-MC_C7"
@@ -17,16 +17,23 @@
             "reservations": {
                 "15.12.2017": [{
                         "note": "Test den 2",
+                        "expectedPersonCount": 6,
                         "from": "10:30",
-                        "to": "12:30",
-                        "expectedPersonsCount": 6,
-                        "customer": "NO"
+                        "to": "10:30",
+                        "videoConference": false
                     }, {
                         "note": "Test den 2",
+                        "expectedPersonCount": 8,
                         "from": "15:30",
-                        "to": "17:00",
-                        "expectedPersonsCount": 8,
-                        "customer": "NO"
+                        "to": "15:30",
+                        "videoConference": false
+                    }],
+                "14.12.2017": [{
+                        "note": "Test den 1",
+                        "expectedPersonCount": 2,
+                        "from": "23:00",
+                        "to": "23:00",
+                        "videoConference": false
                     }]
             },
             "meetingCentre": "EBC-MC_C7"

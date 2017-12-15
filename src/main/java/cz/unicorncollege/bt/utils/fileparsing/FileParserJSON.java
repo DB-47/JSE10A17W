@@ -43,45 +43,36 @@ public class FileParserJSON {
             JSONObject main = new JSONObject(new LinkedHashMap());
             JSONArray data = new JSONArray();
 
-            for (Map.Entry<String, MeetingCentre> entry : inputData.entrySet()) {
+            for (Map.Entry<String, MeetingCentre> entryL1 : inputData.entrySet()) {
 
-                String key = entry.getKey();
-                MeetingCentre value = entry.getValue();
-                for (Map.Entry<String, MeetingRoom> innerEntry : value.getMeetingRooms().entrySet()) {
-                    String innerKey = innerEntry.getKey();
-                    MeetingRoom innerValue = innerEntry.getValue();
+                String key = entryL1.getKey();
+                MeetingCentre value = entryL1.getValue();
+                for (Map.Entry<String, MeetingRoom> entryL2 : value.getMeetingRooms().entrySet()) {
+                    String innerKey = entryL2.getKey();
+                    MeetingRoom innerValue = entryL2.getValue();
                     //Pokud daný meeting room má nějakou rezervaci, provedeme výpis tohoto centra do JSONu
                     if (!innerValue.getReservations().isEmpty()) {
-                        JSONObject object = new JSONObject();
+                        JSONObject object = new JSONObject(new LinkedHashMap());
                         object.put("meetingCentre", key);
                         object.put("meetingRoom", innerKey);
                         Map<Date, List<Reservation>> sortedReservations = innerValue.retrieveReservationSortedByDateAndByTime();
 
-                        for (Map.Entry<Date, List<Reservation>> innerEntry2 : sortedReservations.entrySet()) {
-
-                            Date date = innerEntry2.getKey();
-                            List<Reservation> reservations = innerEntry2.getValue();
-
-                            JSONObject retrievedDay = new JSONObject();
-                            JSONArray retrievedReservations = new JSONArray();
-
-                            String reservationDate = Convertors.convertDateToString(date);
-
-                            for (Reservation r : reservations) {
-                                JSONObject reservationRawData = new JSONObject();
-                                reservationRawData.put("from",r.getTimeFrom());
-                                reservationRawData.put("to",r.getTimeTo());
-                                reservationRawData.put("expectedPersonsCount",r.getExpectedPersonCount());
-                                reservationRawData.put("customer",Convertors.convertBooleanToWord(r.isNeedVideoConference()));
-                                reservationRawData.put("note",r.getNote());
-                                retrievedReservations.add(reservationRawData);
+                        JSONObject reservationsOfDays = new JSONObject(new LinkedHashMap());
+                        for (Map.Entry<Date, List<Reservation>> entryL3 : sortedReservations.entrySet()) {
+                            String dateStr = Convertors.convertDateToString(entryL3.getKey());
+                            JSONArray reservations = new JSONArray();
+                            for (Reservation r : entryL3.getValue()) {
+                                JSONObject reservation = new JSONObject(new LinkedHashMap());
+                                reservation.put("from", r.getTimeFrom());
+                                reservation.put("to", r.getTimeFrom());
+                                reservation.put("expectedPersonCount", r.getExpectedPersonCount());
+                                reservation.put("videoConference", r.isNeedVideoConference());
+                                reservation.put("note", r.getNote());
+                                reservations.add(reservation);
                             }
-
-                            retrievedDay.put(reservationDate, retrievedReservations);
-                            object.put("reservations", retrievedDay);
-
+                            reservationsOfDays.put(dateStr, reservations);
                         }
-                        
+                        object.put("reservations", reservationsOfDays);
                         data.add(object);
                     }
                 }
@@ -90,6 +81,7 @@ public class FileParserJSON {
             main.put("schema", "PLUS4U.EBC.MCS.MeetingRoom_Schedule_1.0");
             main.put("uri", "ues:UCL-BT:UCL.INF/DEMO_REZERVACE:EBC.MCS.DEMO/MR001/SCHEDULE");
             main.put("data", data);
+
             fw.write(main.toJSONString());
 
             fw.flush();
