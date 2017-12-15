@@ -583,8 +583,6 @@ public class MeetingController implements Serializable {
         }
     }
 
-    //For now is used for gCSV file output
-    @Deprecated
     public List<String[]> provideDataForSave() {
         List<String[]> radkyNaExport = new ArrayList<>();
 

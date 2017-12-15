@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +72,9 @@ public class MeetingRoom extends MeetingObject implements Serializable {
         this.meetingCentre = meetingCentre;
     }
 
+    /**
+     * Writes into console all parameters of meeting room
+     */
     public void printRoomParams() {
         System.out.println(name);
         System.out.println("-> Description: " + description);
@@ -85,6 +87,14 @@ public class MeetingRoom extends MeetingObject implements Serializable {
         return reservations;
     }
 
+    /**
+     * Modified getter to get sorted reservations only within given date
+     *
+     * @param getSortedReservationsByDate Date filter for retrieving
+     * reservations
+     *
+     * @return List of reservations for given date sorted by initial time
+     */
     public List<Reservation> getSortedReservationsByDate(Date getSortedReservationsByDate) {
         //I am too lazy to implement sorting, let it TreeMap do it for me :)
         Map<Integer, Reservation> sortedReservations = new TreeMap<>();
@@ -105,6 +115,18 @@ public class MeetingRoom extends MeetingObject implements Serializable {
         return sortedReservationsAsList;
     }
 
+    /**
+     * Modified getter to get sorted reservations only within given date, but
+     * with excluding one reservation (typically editted one), which we do not
+     * want to consider as conflicting one. Your edited reservation cannot
+     * conflict with "itself"
+     *
+     * @param getSortedReservationsByDate Date filter for retrieving
+     * reservations
+     * @param excludedReservationId if of resevation for exclude
+     *
+     * @return List of reservations for given date sorted by initial time
+     */
     public List<Reservation> getSortedReservationsByDate(Date getSortedReservationsByDate, int excludedReservationId) {
         //I am too lazy to implement sorting, let it TreeMap do it for me :)
         Map<Integer, Reservation> sortedReservations = new TreeMap<>();

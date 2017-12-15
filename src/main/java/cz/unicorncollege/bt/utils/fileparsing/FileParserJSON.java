@@ -30,7 +30,7 @@ public class FileParserJSON {
      * Method to export inputData to JSON file
      *
      * @param inputData Map containing all meeting centers, from whose will be
-     * extracted reservations and all necessary information
+     * extracted reservations and all necessary information into JSON file
      */
     public static void exportDataToJSON(Map<String, MeetingCentre> inputData) {
         // TODO: ulozeni dat do souboru ve formatu JSON
@@ -88,7 +88,7 @@ public class FileParserJSON {
 
             System.out.println("");
             System.out.println("**************************************************");
-            System.out.println("Data was exported correctly. The file is here: " + exportDataFile.getAbsolutePath());
+            System.out.println("-> (i) Data was exported correctly. The file is here: " + exportDataFile.getAbsolutePath());
             System.out.println("**************************************************");
             System.out.println("");
 
@@ -96,7 +96,8 @@ public class FileParserJSON {
 
             System.out.println("");
             System.out.println("**************************************************");
-            System.out.println("Something terrible happend during exporting!");
+            System.out.println("-> (!) Something terrible happend during exporting!");
+            System.out.println("-> Error details: " + ex.getMessage());        
             System.out.println("**************************************************");
             System.out.println("");
 
@@ -107,7 +108,8 @@ public class FileParserJSON {
                 } catch (IOException ex) {
                     System.out.println("");
                     System.out.println("**************************************************");
-                    System.out.println("Something terrible happend during exporting!");
+                    System.out.println("-> (!) Something terrible happend during exporting!");
+                    System.out.println("-> Error details: " + ex.getMessage());
                     System.out.println("**************************************************");
                     System.out.println("");
                 }

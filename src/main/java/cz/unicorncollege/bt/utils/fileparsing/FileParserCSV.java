@@ -17,6 +17,11 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Class for retrieving data from CSV file and saving in-app data into CSV file
+ * 
+ */
+
 public class FileParserCSV {
 
 
@@ -25,7 +30,11 @@ public class FileParserCSV {
     public static final String EMPTY_CELL = "";
     public static final String KEYWORD_CANCEL = "!cancel";
 
-
+    /**
+     * Import data from selected csv file containing in-app data
+     * 
+     * @return Retrieved data in Map representation
+     */
     public static Map<String, MeetingCentre> importData() {
 
         Map<String, MeetingCentre> allMeetingCentres = new LinkedHashMap<>();
@@ -63,14 +72,18 @@ public class FileParserCSV {
         return allMeetingCentres;
     }
 
-
+/**
+ * Saves preparsed data from in-app data into CSV file
+ * 
+ * @param output Preparsed data from in-app data
+ */
     public static void saveData(List<String[]> output) {
 
         try {
             writeListToCSV(output, DEFAULT_FILE_PATH, ODDELOVAC);
             System.out.println();
             System.out.println("**************************************************");
-            System.out.println("-> Data was saved correctly.");
+            System.out.println("-> (i) Data was saved correctly.");
             System.out.println("**************************************************");
             System.out.println();
         } catch (IOException ex) {
@@ -89,7 +102,7 @@ public class FileParserCSV {
             mcs = writeRawDataToWorkData(radky);
             System.out.println();
             System.out.println("**************************************************");
-            System.out.println("-> Data was loaded correctly.");
+            System.out.println("-> (i) Data was loaded correctly.");
             System.out.println("**************************************************");
             System.out.println();
         } catch (IOException ex) {
@@ -116,6 +129,9 @@ public class FileParserCSV {
         return radky;
     }
 
+    /**
+     * This
+     */
     private static void writeListToCSV(List<String[]> enterRows, String target, char separator) throws IOException {
 
         CSVWriter writer = new CSVWriter(new FileWriter(target), separator);
@@ -126,40 +142,60 @@ public class FileParserCSV {
 
     }
 
+    /**
+     * Parses raw data from CSV file as they are into Map representation of
+     * in-app data
+     * 
+     * @param enterRows Data from CSV
+     * 
+     * @return Map for in-app data
+     */
     private static Map<String, MeetingCentre> writeRawDataToWorkData(List<String[]> enterRows) {
         Map<String, MeetingCentre> mcs = new LinkedHashMap<>();
         for (String[] row : enterRows) {
             // 
-            int voidCells = distinctRoomsFromCentres(row);
+            int voidCells = countVoidCells(row);
 
-            if (voidCells == 5) {
-                //We found metadata row
-            } else if (voidCells == 3) {
-                //We found MC
-                mcs.put(row[1], new MeetingCentre(new LinkedHashMap<String, MeetingRoom>(), row[0], row[1], row[2]));
-            } else if (voidCells == 0) {
-                // We found MR
-                if (mcs.containsKey(row[5])) {
-                    mcs.get(row[5]).getMeetingRooms().put(row[1], new MeetingRoom(
-                            Integer.parseInt(row[3]),
-                            Convertors.convertWordToBoolean(row[4], "YES", "NO"),
-                            mcs.get(row[5]),
-                            row[0],
-                            row[1],
-                            row[2],
-                            new ArrayList<Reservation>()
-                    ));
-                } else {
-                    System.out.println("Your file contains room, that belongs to non-existing MC");
-                    System.out.println("This room will be excluded from import");
-                }
+            switch (voidCells) {
+            //We found metadata row
+                case 5:
+                    break;
+                case 3:
+                    //We found MC
+                    mcs.put(row[1], new MeetingCentre(new LinkedHashMap<String, MeetingRoom>(), row[0], row[1], row[2]));
+                    break;
+                case 0:
+                    // We found MR
+                    if (mcs.containsKey(row[5])) {
+                        mcs.get(row[5]).getMeetingRooms().put(row[1], new MeetingRoom(
+                                Integer.parseInt(row[3]),
+                                Convertors.convertWordToBoolean(row[4], "YES", "NO"),
+                                mcs.get(row[5]),
+                                row[0],
+                                row[1],
+                                row[2],
+                                new ArrayList<Reservation>()
+                        ));
+                    } else {
+                        System.out.println("(!) Your file contains room, that belongs to non-existing MC");
+                        System.out.println("This room will be excluded from import");
+                    }   break;
+                default:
+                    break;
             }
 
         }
         return mcs;
     }
 
-    private static int distinctRoomsFromCentres(String[] radek) {
+    /**
+     * Count, how many cells from CSV files are empty
+     * 
+     * @param radek One row of raw data from CSV file
+     * 
+     * @return count of empty cells
+     */
+    private static int countVoidCells(String[] radek) {
         int voidCells = 0;
         for (int i = 0; i < radek.length; i++) {
             if (radek[i].equals(EMPTY_CELL)) {

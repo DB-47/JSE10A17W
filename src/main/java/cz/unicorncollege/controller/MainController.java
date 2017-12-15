@@ -22,6 +22,9 @@ public class MainController {
     private MeetingController controll;
     private ReservationController controllR;
 
+    /**
+     * Creates instance of main controller and starts all dependent controllers
+     */
     public MainController() {
         controll = new MeetingController();
         controll.init();
@@ -32,7 +35,9 @@ public class MainController {
         MainController instance = new MainController();
         instance.run();
     }
-
+    /**
+     * Starts main menu with all options
+     */
     private void run() {
         List<String> choices = new ArrayList<>();
         choices.add("List all Meeting Centres");

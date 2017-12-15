@@ -1,20 +1,24 @@
 package cz.unicorncollege.bt.utils;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
 /**
- * Class with methods for listing choices for console UI menus and getting
- * input from user
- * 
+ * Class with methods for listing choices for console UI menus and getting input
+ * from user
+ *
  * @author UCL, DB-47
  */
 public class Choices {
 
+    /**
+     * Writes on console list all possible choices in format as n. choice
+     */
     public static void listChoices(List<String> choices) {
         for (int i = 0; i < choices.size(); i++) {
-            System.out.println(" " + (i+1) + " - " + choices.get(i));
+            System.out.println(" " + (i + 1) + " - " + choices.get(i));
         }
     }
 
@@ -56,11 +60,10 @@ public class Choices {
         BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
         try {
             result = r.readLine().trim();
-        } catch (Exception e) {
+        } catch (IOException e) {
         }
 
         return result;
     }
-    
-  
+
 }

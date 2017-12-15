@@ -28,7 +28,10 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
- *
+ * Class for parsing XML files for this app and saving in-app data back into
+ * XML file. Both reader and writer are implemented as SAX. SAX is significantly
+ * faster than DOM, but much harder to be coded
+ * 
  * @author DB-47-PG
  */
 public class FileParserXML {

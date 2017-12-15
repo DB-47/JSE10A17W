@@ -23,9 +23,6 @@ public class ReservationController {
     private MeetingRoom actualMeetingRoom;
     private Date actualDate;
 
-    //In my implementation you can create reservation at least n hours before its begin
-    public static final int MINIMAL_TIME_MARGIN = 2; //Hours
-
     /**
      * Constructor for ReservationController class
      *
@@ -40,8 +37,6 @@ public class ReservationController {
     /**
      * Method to show options for reservations. Namely select meeting centre and
      * room and after that jump into reservation menu of selected meeting room
-     *
-     * So far ugly implementation :(
      */
     public void showReservationMenu() {
 
@@ -139,6 +134,10 @@ public class ReservationController {
         getItemsToShow();
     }
 
+    /**
+     * Method initiates add reservations wizard, which asks user to fill in all
+     * required data to create reservation
+     */
     private void addNewReservation() {
         String[] times = verifyAndGetTimePeriodForReservation(actualMeetingRoom.getSortedReservationsByDate(actualDate), false, "", "");
 
@@ -168,7 +167,7 @@ public class ReservationController {
                             Reservation r = new Reservation(actualMeetingRoom, actualDate, times[0], times[1], expectedPersonCount, customer, videoConf, note);
                             actualMeetingRoom.getReservations().add(r);
                             System.out.println("Reservation successfully added");
-                            System.out.println("");                           
+                            System.out.println("");
                         }
                     }
                 }
@@ -215,6 +214,13 @@ public class ReservationController {
         return videoConfString;
     }
 
+    /**
+     * This method verifies, if user tries to require video conference in room
+     * which does not support that
+     *
+     * @param booleanValue Input from user
+     * @return true if validation failed
+     */
     private boolean verifyValidityOfVideoConference(String booleanValue) {
         if (!actualMeetingRoom.HasVideoConference() && Convertors.convertWordToBoolean(booleanValue)) {
             System.out.println("(!) This room does not support video conferences");
@@ -277,10 +283,21 @@ public class ReservationController {
         return countString;
     }
 
+    /**
+     * This method verifies, if user wrote number and if he did not exceed
+     * capacity of room
+     *
+     * @param gainedInput String representing numeric value
+     *
+     * @return false, if something failed
+     */
     private boolean verifyExpectedPersonCount(String gainedInput) {
         Integer result;
         try {
             result = Integer.parseInt(gainedInput);
+            if (result > actualMeetingRoom.getCapacity()) {
+                System.out.println("(!) Meeting room capcity is smaller, than you need");
+            }
         } catch (NumberFormatException nfe) {
             System.out.println("(!) Only numeric values are accepted");
             return false;
@@ -314,6 +331,21 @@ public class ReservationController {
         return time;
     }
 
+    /**
+     * This method is used for getting initial and finish time of reservation.
+     *
+     * @param otherReservations List of all reservations, whose time periods
+     * can't collide with times provided and parameters
+     * @param update If true, method may return empty string in return array
+     * @param givenTimeFrom Unvalidated string representing initial time of
+     * reservation
+     * @param givenTimeTo Unvalidate string representing finish time of
+     * reservation
+     *
+     * @return Array with initial and finish time, in update mode, one or both
+     * slots can be empty. If user terminates entering times. Single string
+     * array {"!cancel"} is returned
+     */
     private String[] verifyAndGetTimePeriodForReservation(List<Reservation> otherReservations, boolean update, String givenTimeFrom, String givenTimeTo) {
 
         ReservationConflictType status = ReservationConflictType.BOTH;
@@ -373,7 +405,18 @@ public class ReservationController {
         return cancelResult;
     }
 
-    private void deleteOrUpdateReservation(boolean commitOfCperationOnChoice, CRUDOperation operation) {
+    /**
+     * This method works as switch between edit and update operations and
+     * eliminates code duplicity to maintain DNRY access. User selects number of
+     * reservation as choice, where edit or update should be performed
+     *
+     * @param askBeforeAction Does user have to confirm, he wants to carry out
+     * such action?
+     * @param operation Do we delete or update?
+     *
+     *
+     */
+    private void deleteOrUpdateReservation(boolean askBeforeAction, CRUDOperation operation) {
         if (!actualMeetingRoom.getReservationsWithIndexes(actualDate).isEmpty()) {
             Map<Integer, Reservation> availableReservations = actualMeetingRoom.getReservationsWithIndexes(actualDate);
             Map<Integer, Integer> choiceToId = new LinkedHashMap<>();
@@ -410,7 +453,7 @@ public class ReservationController {
                     System.out.println("(!) You must enter numeric value");
                 }
             } while (reservationChoice == null);
-            if (commitOfCperationOnChoice) {
+            if (askBeforeAction) {
 
                 String eraseDecision = Choices.getInput("Are you sure, you want to " + operation.toString() + " this reservation? (type true,y,yes,a to confirm) ");
                 if (Convertors.convertWordToBoolean(eraseDecision)) {
@@ -430,11 +473,21 @@ public class ReservationController {
         }
     }
 
+    /**
+     * Removes reservation by its id from list of reservation of meeting room
+     *
+     * @param idForErase id of reservation in list
+     */
     private void deleteReservation(int idForErase) {
         actualMeetingRoom.getReservations().remove(idForErase);
         System.out.println("This reservation was removed");
     }
 
+    /**
+     * Edits reservation of given id in list of reservation of meeting room
+     *
+     * @param idForErase id of reservation in list
+     */
     private void editReservation(int idForEdit) {
         System.out.println("If you want to keep same value as it was, leave it blank during edit");
         System.out.println("If you want to cancel edit process type !cancel and all changes will be thrown away");
@@ -476,8 +529,8 @@ public class ReservationController {
                                 Boolean newNeedVideoConference = Convertors.convertWordToBoolean(newExpectedPersonCountString);
                                 actualMeetingRoom.getReservations().get(idForEdit).setNeedVideoConference(newNeedVideoConference);
                             }
-                            if(!newNote.isEmpty()){
-                            actualMeetingRoom.getReservations().get(idForEdit).setNote(newNote);
+                            if (!newNote.isEmpty()) {
+                                actualMeetingRoom.getReservations().get(idForEdit).setNote(newNote);
                             }
                             System.out.println("(i) Data sucessfully updated");
                         }
@@ -488,6 +541,13 @@ public class ReservationController {
 
     }
 
+    /**
+     * Depending on given ENUM and id will be carried out delete or edit of
+     * reservation of given id
+     *
+     * @param operation What operation will be done?
+     * @param id id of reservation for selected action
+     */
     private void selectMethodByEnum(CRUDOperation operation, int id) {
         switch (operation) {
             case DELETE:
@@ -499,6 +559,9 @@ public class ReservationController {
         }
     }
 
+    /*
+    * Methods changes date context of reservation controller
+     */
     private void changeDate() {
         String dateString = Choices.getInput("Type date as (DD.MM.YYYY)");
         Date newDate = Convertors.convertStringToDate(dateString);
@@ -513,6 +576,9 @@ public class ReservationController {
 
     }
 
+    /*
+    * Lists all possible operations, which can reserervation controller do
+     */
     private void getItemsToShow() {
         listReservationsByDate(actualDate, false);
 
@@ -556,6 +622,13 @@ public class ReservationController {
         }
     }
 
+    /**
+     * Writes into console all reservation for given date
+     *
+     * @param date For which date we list reservations
+     * @param moreDetails If true, additional data of reservations will be
+     * listed
+     */
     private void listReservationsByDate(Date date, boolean moreDetails) {
         // list reservations
         List<Reservation> list = actualMeetingRoom.getSortedReservationsByDate(date);
@@ -591,6 +664,15 @@ public class ReservationController {
         return sdf.format(actualDate);
     }
 
+    /**
+     * Method verifies if sucessfully both initial and final time make sense in
+     * context of reservation. Nothing can ends earlier, than it starts
+     *
+     * @param t1 Initial time
+     * @param t2 Final time
+     *
+     * @return true if times are making sense
+     */
     private boolean areGivenTimesValid(String t1, String t2) {
         int time1 = Convertors.convertTimeStringToMinutesInt(t1);
         int time2 = Convertors.convertTimeStringToMinutesInt(t2);
@@ -647,7 +729,7 @@ public class ReservationController {
     /**
      * Method to get actual name of place - meeteng center and room
      *
-     * @return
+     * @return Meeting centre name and meeting room
      */
     private String getCentreAndRoomNames() {
         return "MC: " + actualMeetingCentre.getName() + " , MR: " + actualMeetingRoom.getName();
@@ -656,7 +738,7 @@ public class ReservationController {
     /**
      * Method to get actual state - MC, MR, Date
      *
-     * @return
+     * @return Meeting centre name, meeting room name and actual date
      */
     private String getActualData() {
         return getCentreAndRoomNames() + ", Date: " + getFormattedDate();
