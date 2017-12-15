@@ -1,1 +1,35 @@
-{"schema":"PLUS4U.EBC.MCS.MeetingRoom_Schedule_1.0\n","data":[],"uri":"ues:UCL-BT:UCL.INF\/DEMO_REZERVACE:EBC.MCS.DEMO\/MR001\/SCHEDULE\n"}
+{
+    "schema": "PLUS4U.EBC.MCS.MeetingRoom_Schedule_1.0",
+    "data": [{
+            "meetingRoom": "EBC-C7-MR:1_1",
+            "reservations": {
+                "15.12.2017": [{
+                        "note": "Jin� m�stnost",
+                        "from": "06:30",
+                        "to": "08:00",
+                        "expectedPersonsCount": 6,
+                        "customer": "NO"
+                    }]
+            },
+            "meetingCentre": "EBC-MC_C7"
+        }, {
+            "meetingRoom": "EBC-C7-MR:1_3",
+            "reservations": {
+                "15.12.2017": [{
+                        "note": "Test den 2",
+                        "from": "10:30",
+                        "to": "12:30",
+                        "expectedPersonsCount": 6,
+                        "customer": "NO"
+                    }, {
+                        "note": "Test den 2",
+                        "from": "15:30",
+                        "to": "17:00",
+                        "expectedPersonsCount": 8,
+                        "customer": "NO"
+                    }]
+            },
+            "meetingCentre": "EBC-MC_C7"
+        }],
+    "uri": "ues:UCL-BT:UCL.INF\/DEMO_REZERVACE:EBC.MCS.DEMO\/MR001\/SCHEDULE"
+}
