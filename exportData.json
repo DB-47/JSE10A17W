@@ -1,18 +1,6 @@
 {
     "schema": "PLUS4U.EBC.MCS.MeetingRoom_Schedule_1.0",
     "data": [{
-            "meetingRoom": "EBC-C7-MR:1_1",
-            "reservations": {
-                "15.12.2017": [{
-                        "note": "Jin� m�stnost",
-                        "expectedPersonCount": 6,
-                        "from": "06:30",
-                        "to": "06:30",
-                        "videoConference": false
-                    }]
-            },
-            "meetingCentre": "EBC-MC_C7"
-        }, {
             "meetingRoom": "EBC-C7-MR:1_3",
             "reservations": {
                 "15.12.2017": [{
@@ -33,6 +21,13 @@
                         "expectedPersonCount": 2,
                         "from": "23:00",
                         "to": "23:00",
+                        "videoConference": false
+                    }],
+                "13.12.2017": [{
+                        "note": "Test den 2",
+                        "expectedPersonCount": 1,
+                        "from": "10:20",
+                        "to": "10:20",
                         "videoConference": false
                     }]
             },
