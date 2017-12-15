@@ -144,12 +144,10 @@ public class MeetingRoom extends MeetingObject implements Serializable {
             sortedDates.add(r.getDate());
         }
         for (Date sortedDate : sortedDates) {
-            System.out.println("----> " + Convertors.convertDateToString(sortedDate));
             allSortedReservations.put(sortedDate, new ArrayList<Reservation>());
             List<Reservation> thisDateReservations = getSortedReservationsByDate(sortedDate);
             for (Reservation thisDateReservation : thisDateReservations) {
                 allSortedReservations.get(sortedDate).add(thisDateReservation);
-                System.out.println("--> " + thisDateReservation.toString());
             }
         }
         return allSortedReservations;
