@@ -2,13 +2,16 @@ package cz.unicorncollege.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import cz.unicorncollege.bt.model.MeetingCentre;
 import cz.unicorncollege.bt.utils.Choices;
-import cz.unicorncollege.bt.utils.fileparsing.FileParserCSV;
-import cz.unicorncollege.bt.utils.fileparsing.FileParserJSON;
+import cz.unicorncollege.bt.fileparsers.FileParserCSV;
+import cz.unicorncollege.bt.fileparsers.FileParserJSON;
 import cz.unicorncollege.bt.utils.Convertors;
 import cz.unicorncollege.bt.utils.HashGenerators;
-import cz.unicorncollege.bt.utils.fileparsing.FileParserXML;
+import cz.unicorncollege.bt.fileparsers.FileParserXML;
 import java.util.Map;
 
 /**

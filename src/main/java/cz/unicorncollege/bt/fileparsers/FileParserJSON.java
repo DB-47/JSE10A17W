@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.unicorncollege.bt.utils.fileparsing;
+package cz.unicorncollege.bt.fileparsers;
 
 import cz.unicorncollege.bt.model.MeetingCentre;
 import cz.unicorncollege.bt.model.MeetingRoom;

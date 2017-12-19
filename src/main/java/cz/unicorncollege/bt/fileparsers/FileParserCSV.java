@@ -1,4 +1,4 @@
-package cz.unicorncollege.bt.utils.fileparsing;
+package cz.unicorncollege.bt.fileparsers;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
